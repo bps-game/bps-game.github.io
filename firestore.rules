@@ -1,10 +1,11 @@
 rules_version = '2';
 
 // Règles de sécurité pour l'outil de contribution/modération des questions
-// (editor.html, mode "en ligne"). Le jeu multijoueur lui-même ne touche
-// jamais à cette base : il continue de lire questions/questions.json en
-// statique. Cette base sert uniquement à proposer/valider de nouvelles
-// questions avant qu'elles soient exportées dans ce fichier.
+// (editor.html, mode "en ligne") ET pour la collection /questions, lue en
+// lecture seule par le jeu lui-même (sans connexion requise pour jouer — voir
+// js/questions.js) et alimentée automatiquement par les admins depuis
+// l'éditeur (plus besoin d'exporter/committer questions/questions.json à la
+// main : voir js/contribute.js).
 //
 // À coller tel quel dans Firebase Console → Firestore Database → Règles.
 service cloud.firestore {
@@ -54,6 +55,21 @@ service cloud.firestore {
         && request.resource.data.pseudo is string
         && request.resource.data.pseudo.size() > 0
         && request.resource.data.pseudo.size() <= 24;
+    }
+
+    // Questions publiées en direct depuis l'éditeur (en plus du fichier
+    // statique questions/questions.json, qui reste le socle de départ) :
+    // lues par tout le monde SANS connexion — le jeu doit pouvoir charger
+    // les questions sans compte — et modifiables uniquement par un admin.
+    // Une "suppression" ne retire pas le document : elle pose deleted=true
+    // (voir js/contribute.js), un repère filtré à la fusion avec le fichier
+    // statique (voir js/questions.js) — y compris pour retirer une question
+    // qui n'existait à l'origine que dans ce fichier statique.
+    match /questions/{questionId} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && request.resource.data.id == questionId
+        && request.resource.data.id is string;
     }
 
     // Questions proposées par la communauté, en attente de modération.

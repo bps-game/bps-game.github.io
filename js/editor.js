@@ -147,6 +147,7 @@
     saveDraft();
     renderList();
     toast("Question supprimée.");
+    publishDeletionIfAdmin(id);
   }
 
   // ---------- Formulaire (création / édition) ----------
@@ -370,6 +371,27 @@
     renderList();
     closeModal();
     toast(editingId ? "Question mise à jour." : "Question ajoutée.");
+    publishIfAdmin(draft);
+  }
+
+  // ---------- Publication en direct (admin, voir js/online.js) ----------
+  // Si le compte connecté est admin, chaque sauvegarde/suppression locale
+  // est aussi répercutée immédiatement sur Firestore (collection
+  // /questions), donc déjà vivante dans le jeu sans étape manuelle. Pour
+  // tout le monde d'autre (pas connecté, pas admin, Firebase non configuré),
+  // l'éditeur se comporte exactement comme avant : local, à exporter/committer.
+  function publishIfAdmin(q) {
+    if (!window.QuestionsSync || !window.QuestionsSync.isReady()) return;
+    window.QuestionsSync.publish(q).catch((err) => {
+      toast("Enregistré localement, mais échec de la publication en direct : " + err.message);
+    });
+  }
+
+  function publishDeletionIfAdmin(id) {
+    if (!window.QuestionsSync || !window.QuestionsSync.isReady()) return;
+    window.QuestionsSync.unpublish(id).catch((err) => {
+      toast("Supprimé localement, mais échec de la suppression en direct : " + err.message);
+    });
   }
 
   // ---------- Chargement / enregistrement du fichier ----------
@@ -482,7 +504,9 @@
   // Ajoute une question déjà approuvée (venue du mode en ligne, voir
   // js/online.js) à la liste locale, prête à être enregistrée/exportée
   // comme n'importe quelle autre question. Renomme l'id en cas de collision
-  // plutôt que d'écraser une question existante.
+  // plutôt que d'écraser une question existante — renvoie la question telle
+  // qu'ajoutée (id éventuellement renommé) pour que js/online.js publie sur
+  // Firestore exactement sous le même id que celui affiché localement.
   function addApprovedQuestion(q) {
     let toAdd = q;
     if (questions.some((x) => x.id === toAdd.id)) {
@@ -491,6 +515,25 @@
     questions.push(toAdd);
     saveDraft();
     renderList();
+    return toAdd;
+  }
+
+  // Charge les questions actuellement en ligne (statique + Firestore, voir
+  // js/questions.js) si l'éditeur démarre à vide (pas de brouillon local) :
+  // évite d'avoir à Ouvrir/Importer manuellement juste pour voir/éditer
+  // l'existant. Un brouillon en cours (dès la première modification) prend
+  // toujours le pas au prochain chargement de page.
+  async function loadLiveQuestionsIfEmpty() {
+    try {
+      const list = await window.Questions.load();
+      if (questions.length === 0) {
+        questions = list;
+        renderList();
+        toast("Questions actuelles chargées (" + list.length + ").");
+      }
+    } catch (err) {
+      // Pas grave : Ouvrir/Importer restent disponibles.
+    }
   }
 
   // Pont avec js/online.js (module ES séparé à cause du SDK Firebase) : le
@@ -508,8 +551,11 @@
     if (draft && draft.length > 0) {
       questions = draft;
       toast("Brouillon local restauré (" + draft.length + " question(s)).");
+      renderList();
+    } else {
+      renderList();
+      loadLiveQuestionsIfEmpty();
     }
-    renderList();
 
     $("search-input").addEventListener("input", renderList);
     $("btn-new-question").addEventListener("click", () => openModal(null));

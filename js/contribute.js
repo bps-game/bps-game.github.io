@@ -8,6 +8,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  setDoc,
   onSnapshot,
   serverTimestamp,
   query,
@@ -16,6 +17,7 @@ import {
 import { db } from "./firebase-app.js";
 
 const COLLECTION = "proposals";
+const QUESTIONS_COLLECTION = "questions";
 
 export function proposeQuestion(question, user, displayName) {
   return addDoc(collection(db, COLLECTION), {
@@ -48,4 +50,21 @@ export function reviewProposal(proposalId, status, reviewerUid) {
 
 export function deleteProposal(proposalId) {
   return deleteDoc(doc(db, COLLECTION, proposalId));
+}
+
+// Publication en direct d'une question dans le jeu (collection /questions,
+// fusionnée avec questions/questions.json par js/questions.js) : admin
+// uniquement, imposé par firestore.rules. Pas d'étape d'export/commit — la
+// question est live dès que cet appel réussit.
+export function publishQuestion(question) {
+  return setDoc(doc(db, QUESTIONS_COLLECTION, question.id), Object.assign({}, question, { deleted: false }));
+}
+
+// Retire une question publiée (y compris une question dont le socle vient du
+// fichier statique) sans supprimer le document : on pose un repère
+// "deleted", filtré à la fusion (voir js/questions.js). Garde le document
+// plutôt que deleteDoc pour que la suppression s'applique même à une
+// question qui n'a encore jamais été publiée depuis l'éditeur.
+export function unpublishQuestion(id) {
+  return setDoc(doc(db, QUESTIONS_COLLECTION, id), { id, deleted: true });
 }

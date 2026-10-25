@@ -1,11 +1,29 @@
 // Orchestrateur du mode "en ligne" de l'éditeur : connexion Google, file de
 // propositions en direct, actions admin. Module ES séparé (le SDK Firebase
 // l'exige) qui communique avec editor.js (script classique) via
-// window.EditorBridge et window.Questions, déjà exposés par ces fichiers.
+// window.EditorBridge, window.QuestionsSync et window.Questions, déjà
+// exposés par ces fichiers.
 import { signIn, signOutUser, watchAuth, checkIsAdmin, isSuperAdminEmail } from "./auth.js";
-import { proposeQuestion, watchProposals, reviewProposal, deleteProposal } from "./contribute.js";
+import {
+  proposeQuestion,
+  watchProposals,
+  reviewProposal,
+  deleteProposal,
+  publishQuestion,
+  unpublishQuestion,
+} from "./contribute.js";
 import { addAdmin, removeAdmin, watchAdmins } from "./admins.js";
 import { fetchPseudo, savePseudo } from "./profile.js";
+
+// Pont avec editor.js (script classique, ne peut pas importer ce module) :
+// lui permet de publier/retirer une question en direct dès qu'un admin
+// enregistre/supprime depuis l'éditeur local, sans étape manuelle.
+// isReady() reflète le statut admin courant (mis à jour à chaque connexion).
+window.QuestionsSync = {
+  isReady: () => currentIsAdmin,
+  publish: (q) => publishQuestion(q),
+  unpublish: (id) => unpublishQuestion(id),
+};
 
 const $ = (id) => document.getElementById(id);
 
@@ -153,8 +171,9 @@ async function addAdminFromInput() {
 async function approveProposal(proposal) {
   try {
     await reviewProposal(proposal.id, "approved", currentUser.uid);
-    window.EditorBridge.addApprovedQuestion(proposal.question);
-    toast("Proposition approuvée et ajoutée à ta liste locale — pense à Enregistrer/Exporter.");
+    const added = window.EditorBridge.addApprovedQuestion(proposal.question);
+    await publishQuestion(added);
+    toast("Proposition approuvée — déjà en ligne dans le jeu !");
   } catch (err) {
     toast("Erreur lors de l'approbation : " + err.message);
   }
