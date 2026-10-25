@@ -10,10 +10,27 @@ const $ = (id) => document.getElementById(id);
 
 let currentUser = null;
 
+// Pseudo utilisé pour jouer : celui du compte connecté une fois choisi, ou à
+// défaut un pseudo "Newbie-XXXXX" généré une fois par chargement de page —
+// il n'y a plus de champ pseudo manuel sur l'écran d'accueil. Exposé en
+// global (window.AccountIdentity) car main.js est un script classique, pas
+// un module, et ne peut pas importer ce fichier directement.
+function randomNewbiePseudo() {
+  const n = Math.floor(Math.random() * 100000);
+  return "Newbie-" + String(n).padStart(5, "0");
+}
+
+let playPseudo = randomNewbiePseudo();
+
+window.AccountIdentity = {
+  getPseudo: () => playPseudo,
+};
+
 function showSignedOut() {
   $("btn-account-signin").style.display = "inline-block";
   $("account-pseudo-form").style.display = "none";
   $("account-signed-in").style.display = "none";
+  playPseudo = randomNewbiePseudo(); // on oublie le pseudo du compte précédent
 }
 
 function showPseudoForm(prefill) {
@@ -30,6 +47,7 @@ function showSignedIn(pseudo) {
   $("account-pseudo-form").style.display = "none";
   $("account-signed-in").style.display = "flex";
   $("account-name").textContent = pseudo;
+  playPseudo = pseudo;
 }
 
 async function refreshIdentity() {

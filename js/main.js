@@ -38,11 +38,6 @@
     const joinBtn = document.getElementById("btn-join-room");
 
     createBtn.addEventListener("click", () => {
-      const pseudo = document.getElementById("create-pseudo").value.trim();
-      if (!pseudo) {
-        UI.setHomeError("Choisis un pseudo avant de créer une partie.");
-        return;
-      }
       UI.setHomeError("");
       createBtn.disabled = true;
       createBtn.textContent = "Création de la salle…";
@@ -51,7 +46,7 @@
         (code) => {
           role = "host";
           myId = Network.getMyId();
-          myPseudo = pseudo;
+          myPseudo = currentPseudo();
           GameEngine.hostInit(myId, myPseudo);
           UI.setLobbyCode(code, true);
           UI.renderLobby(GameEngine.getPlayers(), true, myId, GameEngine.getWinScore());
@@ -68,12 +63,7 @@
     });
 
     joinBtn.addEventListener("click", () => {
-      const pseudo = document.getElementById("join-pseudo").value.trim();
       const code = document.getElementById("join-code").value.trim();
-      if (!pseudo) {
-        UI.setHomeError("Choisis un pseudo avant de rejoindre.");
-        return;
-      }
       if (!code) {
         UI.setHomeError("Entre le code de la partie à rejoindre.");
         return;
@@ -87,7 +77,7 @@
         () => {
           role = "client";
           myId = Network.getMyId();
-          myPseudo = pseudo;
+          myPseudo = currentPseudo();
           Network.sendToHost({ type: GameEngine.MSG.JOIN, pseudo: myPseudo });
           UI.setLobbyCode(code.trim().toUpperCase(), false);
           UI.renderLobby([{ id: myId, pseudo: myPseudo, score: 0, isHost: false }], false, myId);
@@ -102,6 +92,20 @@
         }
       );
     });
+  }
+
+  // Pseudo de jeu : celui du compte Google connecté (choisi dans le widget
+  // d'accueil), ou un "Newbie-XXXXX" aléatoire si personne n'est connecté —
+  // il n'y a plus de champ pseudo à remplir avant de jouer. Repli local au
+  // cas où account-widget.js n'aurait pas pu se charger (ex : Firebase
+  // injoignable) : le jeu P2P reste jouable sans compte dans tous les cas.
+  function fallbackPseudo() {
+    const n = Math.floor(Math.random() * 100000);
+    return "Newbie-" + String(n).padStart(5, "0");
+  }
+
+  function currentPseudo() {
+    return (window.AccountIdentity && window.AccountIdentity.getPseudo()) || fallbackPseudo();
   }
 
   function describeError(err) {
