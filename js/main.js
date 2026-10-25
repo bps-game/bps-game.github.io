@@ -15,8 +15,21 @@
     wireHomeScreen();
     wireLobbyScreen();
     wireEndScreen();
+    wireMuteButton();
     wireNetwork();
     wireGameEngine();
+  }
+
+  function wireMuteButton() {
+    const btn = document.getElementById("btn-mute");
+    const sync = () => {
+      btn.textContent = window.Sound.isMuted() ? "🔇" : "🔊";
+    };
+    sync();
+    btn.addEventListener("click", () => {
+      window.Sound.toggleMuted();
+      sync();
+    });
   }
 
   function wireHomeScreen() {

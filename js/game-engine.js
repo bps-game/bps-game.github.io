@@ -228,6 +228,7 @@
           id: player.id,
           pseudo: player.pseudo,
           score: player.score,
+          streak: player.streak,
           status: correctEntry ? "correct" : wrongAttempt ? "wrong" : "none",
           lastWrongAnswer: wrongAttempt || null,
         };
@@ -248,12 +249,12 @@
       role = "host";
       hostOwnId = myId;
       players.clear();
-      players.set(myId, { id: myId, pseudo: myPseudo, score: 0, isHost: true });
+      players.set(myId, { id: myId, pseudo: myPseudo, score: 0, streak: 0, isHost: true });
     }
 
     function hostAddPlayer(peerId, pseudo) {
       if (players.has(peerId)) return;
-      players.set(peerId, { id: peerId, pseudo: pseudo || "Joueur", score: 0, isHost: false });
+      players.set(peerId, { id: peerId, pseudo: pseudo || "Joueur", score: 0, streak: 0, isHost: false });
       broadcastLobby();
     }
 
@@ -316,6 +317,7 @@
         }
         const player = players.get(peerId);
         player.score += gained;
+        player.streak += 1;
         currentAnswers.set(peerId, { answer, gained });
         payload = { type: MSG.ANSWER_RESULT, correct: true, gained, totalScore: player.score };
       } else {
@@ -344,6 +346,7 @@
       players.forEach((player, peerId) => {
         const entry = currentAnswers.get(peerId);
         const wrongAttempt = lastWrongAttempt.get(peerId);
+        if (!entry) player.streak = 0; // série cassée si pas trouvé cette question
         results.push({
           id: peerId,
           pseudo: player.pseudo,
@@ -352,6 +355,7 @@
           correct: !!entry,
           gained: entry ? entry.gained : 0,
           totalScore: player.score,
+          streak: player.streak,
         });
       });
 
