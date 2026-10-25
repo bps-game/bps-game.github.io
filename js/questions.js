@@ -20,6 +20,18 @@
       if (!Array.isArray(q.acceptableAnswers) || q.acceptableAnswers.length === 0) {
         throw new Error(`Question #${i} invalide : "acceptableAnswers" manquant ou vide.`);
       }
+      if (q.media) {
+        const validTypes = ["image", "video", "quote"];
+        if (!validTypes.includes(q.media.type)) {
+          throw new Error(`Question #${i} invalide : "media.type" doit être image, video ou quote.`);
+        }
+        if (q.media.type === "quote" && !q.media.text) {
+          throw new Error(`Question #${i} invalide : "media.text" manquant pour une citation.`);
+        }
+        if ((q.media.type === "image" || q.media.type === "video") && !q.media.src) {
+          throw new Error(`Question #${i} invalide : "media.src" manquant.`);
+        }
+      }
     });
   }
 

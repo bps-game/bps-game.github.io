@@ -170,6 +170,40 @@
     }, 100);
   }
 
+  // Élément visuel façon Popsauce : image (fixe ou GIF), vidéo courte (muette
+  // et en boucle par défaut) ou citation à deviner. `media` est optionnel.
+  function renderQuestionMedia(media) {
+    const img = $("question-media-image");
+    const video = $("question-media-video");
+    const quote = $("question-media-quote");
+
+    img.style.display = "none";
+    img.removeAttribute("src");
+    video.pause();
+    video.style.display = "none";
+    video.removeAttribute("src");
+    video.load();
+    quote.style.display = "none";
+    quote.textContent = "";
+
+    if (!media) return;
+
+    if (media.type === "image") {
+      img.src = media.src;
+      img.style.display = "block";
+    } else if (media.type === "video") {
+      video.src = media.src;
+      video.loop = media.loop !== false;
+      video.muted = media.muted !== false;
+      video.autoplay = true;
+      video.style.display = "block";
+      video.play().catch(() => {}); // l'autoplay peut être refusé, tant pis
+    } else if (media.type === "quote") {
+      quote.textContent = media.text;
+      quote.style.display = "block";
+    }
+  }
+
   function renderQuestion(payload, handlers) {
     $("question-progress").textContent = "Question " + (payload.index + 1) + "/" + payload.total;
     $("question-category").textContent = payload.category || "";
@@ -180,14 +214,7 @@
     void textEl.offsetWidth; // relance l'animation d'entrée à chaque question
     textEl.classList.add("text-in");
 
-    const img = $("question-image");
-    if (payload.image) {
-      img.src = payload.image;
-      img.style.display = "block";
-    } else {
-      img.style.display = "none";
-      img.removeAttribute("src");
-    }
+    renderQuestionMedia(payload.media);
 
     const status = $("answer-status");
     status.style.display = "none";

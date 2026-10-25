@@ -477,6 +477,38 @@ button:disabled {
   display: block;
 }
 
+.question-video {
+  width: 100%;
+  background: #000;
+}
+
+.question-quote {
+  position: relative;
+  margin: 0 0 16px;
+  padding: 20px 22px 20px 48px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.question-quote::before {
+  content: "\201C";
+  position: absolute;
+  left: 12px;
+  top: 2px;
+  font-size: 2.6rem;
+  font-style: normal;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--accent);
+  opacity: 0.55;
+}
+
 .question-layout {
   display: flex;
   align-items: flex-start;

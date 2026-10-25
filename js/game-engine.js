@@ -288,7 +288,7 @@
         total: questions.length,
         category: q.category,
         text: q.question,
-        image: q.image || null,
+        media: q.media || null,
         timeLimit: q.timeLimit,
       };
       window.Network.broadcast(payload);
