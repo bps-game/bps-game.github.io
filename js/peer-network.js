@@ -86,11 +86,18 @@
       if (hostConnection && hostConnection.open) hostConnection.send(data);
     }
 
+    // Envoi privé de l'hôte vers un seul joueur (réponse à une tentative).
+    function send(peerId, data) {
+      const conn = connections.get(peerId);
+      if (conn && conn.open) conn.send(data);
+    }
+
     return {
       createRoom,
       joinRoom,
       broadcast,
       sendToHost,
+      send,
       onMessage: (fn) => messageHandlers.push(fn),
       onPeerJoin: (fn) => peerJoinHandlers.push(fn),
       onPeerLeave: (fn) => peerLeaveHandlers.push(fn),

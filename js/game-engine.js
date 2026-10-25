@@ -7,12 +7,21 @@
     JOIN: "JOIN",
     LOBBY_UPDATE: "LOBBY_UPDATE",
     QUESTION: "QUESTION",
+    ANSWER: "ANSWER",
+    ANSWER_RESULT: "ANSWER_RESULT",
     REVEAL: "REVEAL",
     GAME_END: "GAME_END",
-    ANSWER: "ANSWER",
   };
 
   const REVEAL_DURATION_MS = 6000;
+
+  // Plage Unicode des diacritiques combinants (0300-036F), construite via
+  // String.fromCharCode pour éviter tout souci d'échappement de séquence
+  // unicode dans le code source.
+  const ACCENT_RANGE_RE = new RegExp(
+    "[" + String.fromCharCode(768) + "-" + String.fromCharCode(879) + "]",
+    "g"
+  );
 
   // ---------- Correction des réponses libres ----------
   //
@@ -37,7 +46,7 @@
     return (str || "")
       .toString()
       .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "") // accents
+      .replace(ACCENT_RANGE_RE, "") // accents
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, " ") // ponctuation -> espace (jamais fusionnée)
       .trim()
@@ -155,12 +164,14 @@
 
   function createGameEngine() {
     let role = null;
+    let hostOwnId = null;
     let questions = [];
     let currentIndex = -1;
     let questionTimer = null;
     let revealTimer = null;
     let questionStartedAt = 0;
-    let currentAnswers = new Map(); // peerId -> { answer, elapsedMs }
+    let currentAnswers = new Map(); // peerId -> { answer, elapsedMs, gained } (réponses CORRECTES verrouillées)
+    let lastWrongAttempt = new Map(); // peerId -> dernier texte tenté (faux), pour l'affichage en correction
 
     // players: peerId -> { id, pseudo, score, isHost }
     const players = new Map();
@@ -168,6 +179,7 @@
     const callbacks = {
       lobbyUpdate: null,
       question: null,
+      answerResult: null,
       reveal: null,
       gameEnd: null,
     };
@@ -196,6 +208,7 @@
 
     function hostInit(myId, myPseudo) {
       role = "host";
+      hostOwnId = myId;
       players.clear();
       players.set(myId, { id: myId, pseudo: myPseudo, score: 0, isHost: true });
     }
@@ -227,6 +240,7 @@
         return;
       }
       currentAnswers = new Map();
+      lastWrongAttempt = new Map();
       questionStartedAt = Date.now();
       const q = questions[currentIndex];
       const payload = {
@@ -243,11 +257,35 @@
       questionTimer = setTimeout(() => hostRevealAnswer(), q.timeLimit * 1000 + 300);
     }
 
-    function hostRecordAnswer(peerId, answer) {
-      if (currentAnswers.has(peerId)) return; // une seule réponse comptée par joueur
-      const elapsedMs = Date.now() - questionStartedAt;
-      currentAnswers.set(peerId, { answer, elapsedMs });
-      if (currentAnswers.size >= players.size) {
+    // Le joueur peut retenter autant de fois qu'il veut jusqu'à expiration du
+    // temps : une tentative fausse vide le champ (le joueur retape), une
+    // tentative juste verrouille le champ et rapporte immédiatement les
+    // points (calculés sur l'instant de CETTE tentative, pas de la première).
+    function hostHandleAttempt(peerId, answer) {
+      if (currentAnswers.has(peerId)) return; // déjà verrouillé sur une bonne réponse
+      const q = questions[currentIndex];
+      const correct = isAnswerCorrect(answer, q.acceptableAnswers);
+      let payload;
+
+      if (correct) {
+        const elapsedMs = Date.now() - questionStartedAt;
+        const gained = computeScore(q.points, q.timeLimit, elapsedMs);
+        const player = players.get(peerId);
+        player.score += gained;
+        currentAnswers.set(peerId, { answer, elapsedMs, gained });
+        payload = { type: MSG.ANSWER_RESULT, correct: true, gained, totalScore: player.score };
+      } else {
+        lastWrongAttempt.set(peerId, answer);
+        payload = { type: MSG.ANSWER_RESULT, correct: false };
+      }
+
+      if (peerId === hostOwnId) {
+        if (callbacks.answerResult) callbacks.answerResult(payload);
+      } else {
+        window.Network.send(peerId, payload);
+      }
+
+      if (correct && currentAnswers.size >= players.size) {
         clearTimeout(questionTimer);
         hostRevealAnswer();
       }
@@ -260,20 +298,14 @@
 
       players.forEach((player, peerId) => {
         const entry = currentAnswers.get(peerId);
-        let correct = false;
-        let gained = 0;
-        if (entry) {
-          correct = isAnswerCorrect(entry.answer, q.acceptableAnswers);
-          if (correct) gained = computeScore(q.points, q.timeLimit, entry.elapsedMs);
-        }
-        player.score += gained;
+        const wrongAttempt = lastWrongAttempt.get(peerId);
         results.push({
           id: peerId,
           pseudo: player.pseudo,
-          answered: !!entry,
-          submitted: entry ? entry.answer : null,
-          correct,
-          gained,
+          answered: !!entry || !!wrongAttempt,
+          submitted: entry ? entry.answer : wrongAttempt || null,
+          correct: !!entry,
+          gained: entry ? entry.gained : 0,
           totalScore: player.score,
         });
       });
@@ -306,6 +338,8 @@
         if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players);
       } else if (data.type === MSG.QUESTION) {
         if (callbacks.question) callbacks.question(data);
+      } else if (data.type === MSG.ANSWER_RESULT) {
+        if (callbacks.answerResult) callbacks.answerResult(data);
       } else if (data.type === MSG.REVEAL) {
         if (callbacks.reveal) callbacks.reveal(data);
       } else if (data.type === MSG.GAME_END) {
@@ -321,7 +355,7 @@
       hostAddPlayer,
       hostRemovePlayer,
       hostStartGame,
-      hostRecordAnswer,
+      hostHandleAttempt,
       clientHandleMessage,
       getPlayers: playersArray,
       getRole: () => role,

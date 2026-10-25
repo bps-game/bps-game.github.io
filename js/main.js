@@ -126,7 +126,7 @@
         if (data.type === GameEngine.MSG.JOIN) {
           GameEngine.hostAddPlayer(fromPeerId, data.pseudo);
         } else if (data.type === GameEngine.MSG.ANSWER) {
-          GameEngine.hostRecordAnswer(fromPeerId, data.answer);
+          GameEngine.hostHandleAttempt(fromPeerId, data.answer);
         }
       } else {
         GameEngine.clientHandleMessage(data);
@@ -158,12 +158,16 @@
       UI.renderQuestion(payload, {
         onAnswer: (answer) => {
           if (role === "host") {
-            GameEngine.hostRecordAnswer(myId, answer);
+            GameEngine.hostHandleAttempt(myId, answer);
           } else {
             Network.sendToHost({ type: GameEngine.MSG.ANSWER, index: payload.index, answer });
           }
         },
       });
+    });
+
+    GameEngine.on("answerResult", (payload) => {
+      UI.handleAnswerResult(payload);
     });
 
     GameEngine.on("reveal", (payload) => {

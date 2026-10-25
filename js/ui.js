@@ -4,6 +4,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   let timerInterval = null;
+  let activeAnswer = null; // { input, button, status, locked }
 
   function showScreen(name) {
     document.querySelectorAll(".screen").forEach((el) => el.classList.remove("active"));
@@ -100,39 +101,62 @@
     status.textContent = "";
 
     const input = $("libre-input");
+    const button = $("btn-submit-libre");
     input.value = "";
     input.disabled = false;
+    input.classList.remove("wrong-flash");
     input.focus();
-    $("btn-submit-libre").disabled = false;
+    button.disabled = false;
+
+    activeAnswer = { input, button, status, locked: false };
+
     const submit = () => {
+      if (activeAnswer.locked) return;
       const value = input.value.trim();
       if (!value) return;
-      input.disabled = true;
-      $("btn-submit-libre").disabled = true;
-      showAnswered();
       handlers.onAnswer(value);
     };
-    $("btn-submit-libre").onclick = submit;
+    button.onclick = submit;
     input.onkeydown = (e) => {
       if (e.key === "Enter") submit();
     };
 
     startTimer(payload.timeLimit, () => {
       input.disabled = true;
-      $("btn-submit-libre").disabled = true;
+      button.disabled = true;
     });
 
     showScreen("question");
   }
 
-  function showAnswered() {
-    const status = $("answer-status");
-    status.textContent = "Réponse envoyée, en attente des autres joueurs…";
-    status.style.display = "block";
+  // Appelé dès que l'hôte a jugé une tentative (bonne ou mauvaise), avant même
+  // la correction finale : une bonne réponse verrouille le champ et crédite
+  // les points tout de suite, une mauvaise réponse vide juste le champ pour
+  // retenter (le chrono, lui, continue de tourner).
+  function handleAnswerResult(result) {
+    if (!activeAnswer) return;
+    const { input, button, status } = activeAnswer;
+    if (result.correct) {
+      activeAnswer.locked = true;
+      input.disabled = true;
+      button.disabled = true;
+      status.textContent = "✅ Bonne réponse ! +" + result.gained + " points — en attente des autres joueurs…";
+      status.style.display = "block";
+    } else {
+      input.value = "";
+      input.disabled = false;
+      button.disabled = false;
+      input.focus();
+      input.classList.remove("wrong-flash");
+      // force le redémarrage de l'animation même si elle vient de jouer
+      void input.offsetWidth;
+      input.classList.add("wrong-flash");
+    }
   }
 
   function renderReveal(payload, myId) {
     stopTimer();
+    activeAnswer = null;
     const banner = $("reveal-banner");
     const mine = payload.results.find((r) => r.id === myId);
     if (mine && mine.correct) {
@@ -212,6 +236,7 @@
     renderLobby,
     setLobbyCode,
     renderQuestion,
+    handleAnswerResult,
     renderReveal,
     renderEnd,
     stopTimer,
