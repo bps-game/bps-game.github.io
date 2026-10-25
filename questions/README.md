@@ -4,6 +4,10 @@ Toutes les questions du jeu vivent dans [`questions.json`](questions.json), sous
 
 **Pas envie de toucher au JSON ?** Ouvre [`../editor.html`](../editor.html) : un éditeur visuel (formulaire, aperçu en direct, testeur de réponse) qui lit/écrit ce même fichier. Ce document reste la référence du schéma si tu préfères éditer à la main, ou pour comprendre ce que fait l'éditeur en coulisses.
 
+## Catégorie « Drapeaux »
+
+Les 193 questions de la catégorie `Drapeaux` (un pays membre de l'ONU chacune) utilisent les drapeaux SVG de [flagcdn.com](https://flagcdn.com/) (service gratuit de [Flagpedia.net](https://flagpedia.net/), basé sur des fichiers de Wikimedia Commons, domaine public/libres de droits), stockés dans [`../assets/img/questions/flags/`](../assets/img/questions/flags/).
+
 Toutes les questions sont **à réponse libre** (tapée au clavier) — il n'y a pas de QCM.
 
 ## Schéma d'une question
