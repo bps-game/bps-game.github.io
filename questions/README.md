@@ -20,10 +20,10 @@ Toutes les questions sont **à réponse libre** (tapée au clavier) — il n'y a
 
 ## Comment les points sont calculés
 
-Chaque question rapporte entre **0 et 20 points**, et ça ne dépend pas du temps écoulé depuis le début de la question, mais du temps écoulé **depuis la première bonne réponse** :
+Une bonne réponse rapporte entre **1 et 20 points**, et ça ne dépend pas du temps écoulé depuis le début de la question, mais du temps écoulé **depuis la première bonne réponse** :
 
 - Le premier joueur à trouver la bonne réponse a toujours **20 points**, quel que soit le temps qu'il a mis.
-- À partir de cet instant, les points des bonnes réponses suivantes diminuent progressivement, jusqu'à un plancher de 0 point environ 12 secondes après cette première bonne réponse (au-delà, une bonne réponse rapporte simplement le minimum).
+- À partir de cet instant, les points des bonnes réponses suivantes diminuent progressivement, jusqu'à un plancher de **1 point** environ 12 secondes après cette première bonne réponse (au-delà, une bonne réponse rapporte toujours ce minimum de 1 point — jamais 0, contrairement à une mauvaise réponse ou une absence de réponse).
 
 Ça encourage à répondre vite une fois qu'on sait que quelqu'un a déjà trouvé, plutôt que de comparer chaque joueur au chrono global de la question.
 

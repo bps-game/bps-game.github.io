@@ -22,7 +22,7 @@
   // (et non depuis le début de la question) — jusqu'à un plancher, atteint
   // après SCORE_DECAY_WINDOW_MS.
   const MAX_POINTS_PER_QUESTION = 20;
-  const MIN_POINTS_PER_QUESTION = 0;
+  const MIN_POINTS_PER_QUESTION = 1; // une bonne réponse rapporte toujours au moins 1 point
   const SCORE_DECAY_WINDOW_MS = 12000;
 
   // Plage Unicode des diacritiques combinants (0300-036F), construite via

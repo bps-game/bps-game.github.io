@@ -2,7 +2,7 @@
 
 Quiz de culture générale multijoueur en temps réel, façon Popsauce — **100% gratuit, sans compte, sans serveur à payer**.
 
-Tout le monde répond en même temps aux mêmes questions, à l'écrit (pas de QCM), avec une correction tolérante aux fautes de frappe, aux titres partiels et aux acronymes. Chaque question rapporte entre 0 et 20 points : le premier à trouver a toujours le maximum, puis les points des suivants diminuent avec le temps écoulé depuis cette première bonne réponse. Un tableau des scores en direct (à droite pendant la question) montre qui a trouvé et la dernière tentative fausse de chacun.
+Tout le monde répond en même temps aux mêmes questions, à l'écrit (pas de QCM), avec une correction tolérante aux fautes de frappe, aux titres partiels et aux acronymes. Chaque bonne réponse rapporte entre 1 et 20 points : le premier à trouver a toujours le maximum, puis les points des suivants diminuent avec le temps écoulé depuis cette première bonne réponse, sans jamais descendre sous 1 point. Un tableau des scores en direct (à droite pendant la question) montre qui a trouvé et la dernière tentative fausse de chacun.
 
 ## Comment ça marche techniquement
 
