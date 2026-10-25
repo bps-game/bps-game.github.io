@@ -72,13 +72,19 @@
           <img id="question-image" class="question-image" style="display: none" alt="" />
           <div id="libre-area">
             <div class="field answer-field-wrap">
-              <input
-                type="text"
-                id="libre-input"
-                placeholder="Ta réponse… (Entrée pour valider)"
-                autocomplete="off"
-                enterkeyhint="send"
-              />
+              <div class="answer-input-shell">
+                <input
+                  type="text"
+                  id="libre-input"
+                  class="answer-input-real"
+                  placeholder="Ta réponse… (Entrée pour valider)"
+                  autocomplete="off"
+                  enterkeyhint="send"
+                />
+                <div class="answer-input-display" id="answer-display" aria-hidden="true">
+                  <span id="answer-display-inner"></span>
+                </div>
+              </div>
             </div>
           </div>
           <p class="answer-status" id="answer-status" style="display: none"></p>

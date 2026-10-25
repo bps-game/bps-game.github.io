@@ -5,6 +5,32 @@
   const $ = (id) => document.getElementById(id);
   let timerInterval = null;
   let activeAnswer = null; // { input, status, locked }
+  let lastDisplayedAnswer = "";
+
+  // Recopie la valeur de l'input (invisible) dans le calque d'affichage,
+  // caractère par caractère, en animant uniquement les caractères NOUVEAUX
+  // (pas tout le mot à chaque frappe) et en suivant le défilement horizontal
+  // de l'input pour rester synchronisé sur les réponses longues.
+  function syncAnswerDisplay() {
+    const input = $("libre-input");
+    const inner = $("answer-display-inner");
+    if (!input || !inner) return;
+
+    const value = input.value;
+    let common = 0;
+    const minLen = Math.min(value.length, lastDisplayedAnswer.length);
+    while (common < minLen && value[common] === lastDisplayedAnswer[common]) common++;
+
+    inner.innerHTML = "";
+    for (let i = 0; i < value.length; i++) {
+      const span = document.createElement("span");
+      span.textContent = value[i] === " " ? " " : value[i];
+      if (i >= common) span.className = "char-in";
+      inner.appendChild(span);
+    }
+    lastDisplayedAnswer = value;
+    inner.style.transform = "translateX(-" + input.scrollLeft + "px)";
+  }
 
   function showScreen(name) {
     document.querySelectorAll(".screen").forEach((el) => el.classList.remove("active"));
@@ -171,6 +197,8 @@
     input.value = "";
     input.disabled = false;
     input.classList.remove("wrong-flash");
+    lastDisplayedAnswer = "";
+    syncAnswerDisplay();
     input.focus();
 
     activeAnswer = { input, status, locked: false };
@@ -184,6 +212,8 @@
     input.onkeydown = (e) => {
       if (e.key === "Enter") submit();
     };
+    input.oninput = syncAnswerDisplay;
+    input.onscroll = syncAnswerDisplay;
 
     startTimer(payload.timeLimit, () => {
       input.disabled = true;
@@ -220,6 +250,8 @@
       spawnFloatingPoints(result.gained);
     } else {
       input.value = "";
+      lastDisplayedAnswer = "";
+      syncAnswerDisplay();
       input.disabled = false;
       input.focus();
       input.classList.remove("wrong-flash");
