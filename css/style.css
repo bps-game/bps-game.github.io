@@ -154,6 +154,7 @@ body {
 }
 
 .tabs {
+  position: relative;
   display: flex;
   gap: 8px;
   background: var(--bg-elevated);
@@ -162,7 +163,21 @@ body {
   border: 1px solid var(--card-border);
 }
 
+.tab-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: 0;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  border-radius: 999px;
+  transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1), width 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 0;
+}
+
 .tab {
+  position: relative;
+  z-index: 1;
   flex: 1;
   text-align: center;
   padding: 10px 12px;
@@ -171,11 +186,11 @@ body {
   font-weight: 600;
   color: var(--text-dim);
   user-select: none;
+  transition: color 0.3s ease;
 }
 
 .tab.active {
-  background: var(--primary);
-  color: white;
+  color: #050507;
 }
 
 .field {
@@ -353,11 +368,29 @@ button:disabled {
   height: 100%;
   background: linear-gradient(90deg, var(--accent), var(--primary));
   width: 100%;
+  /* la durée/transition réelle est posée dynamiquement en JS (une seule
+     translation continue sur toute la durée de la question, pas de
+     ressaut) ; cette valeur ne sert que de filet de sécurité. */
   transition: width 0.2s linear;
 }
 
 .timer-bar-fill.low {
   background: linear-gradient(90deg, var(--primary), var(--bad));
+}
+
+@keyframes question-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.question-text.text-in {
+  animation: question-text-in 0.35s ease;
 }
 
 .category-pill {
@@ -504,6 +537,73 @@ button:disabled {
 .reveal-banner.incorrect {
   background: color-mix(in srgb, var(--bad) 22%, transparent);
   color: var(--bad);
+}
+
+.correct-answer-block {
+  text-align: center;
+  margin: 18px 0;
+}
+
+.correct-answer-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.correct-answer-reveal {
+  position: relative;
+  display: inline-block;
+}
+
+.correct-answer-big {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  text-shadow: 0 0 20px rgba(0, 242, 234, 0.3);
+  cursor: default;
+  border-bottom: 2px dotted var(--card-border);
+}
+
+.answer-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  min-width: 220px;
+  max-width: 320px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 10;
+}
+
+.correct-answer-reveal:hover .answer-tooltip,
+.correct-answer-reveal:focus-within .answer-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.answer-tooltip-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.answer-tooltip-list {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.5;
 }
 
 .leaderboard {

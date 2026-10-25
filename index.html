@@ -18,7 +18,8 @@
 
     <div id="screen-home" class="screen active">
       <div class="card">
-        <div class="tabs">
+        <div class="tabs" id="home-tabs">
+          <div class="tab-indicator" id="tab-indicator"></div>
           <div class="tab active" data-tab="create">Créer une partie</div>
           <div class="tab" data-tab="join">Rejoindre</div>
         </div>
@@ -71,9 +72,14 @@
           <img id="question-image" class="question-image" style="display: none" alt="" />
           <div id="libre-area">
             <div class="field answer-field-wrap">
-              <input type="text" id="libre-input" placeholder="Ta réponse…" autocomplete="off" />
+              <input
+                type="text"
+                id="libre-input"
+                placeholder="Ta réponse… (Entrée pour valider)"
+                autocomplete="off"
+                enterkeyhint="send"
+              />
             </div>
-            <button class="btn-primary" id="btn-submit-libre">Valider</button>
           </div>
           <p class="answer-status" id="answer-status" style="display: none"></p>
         </div>
@@ -87,7 +93,16 @@
     <div id="screen-reveal" class="screen">
       <div class="card">
         <div class="reveal-banner" id="reveal-banner"></div>
-        <p class="hint" id="reveal-correct-answer"></p>
+        <div class="correct-answer-block">
+          <div class="correct-answer-label">La bonne réponse</div>
+          <div class="correct-answer-reveal" id="correct-answer-reveal">
+            <span class="correct-answer-big" id="correct-answer-text"></span>
+            <div class="answer-tooltip" id="correct-answer-tooltip">
+              <div class="answer-tooltip-title">Réponses acceptées</div>
+              <div class="answer-tooltip-list" id="correct-answer-tooltip-list"></div>
+            </div>
+          </div>
+        </div>
         <h3 class="hint">Classement</h3>
         <div class="leaderboard" id="reveal-leaderboard"></div>
       </div>

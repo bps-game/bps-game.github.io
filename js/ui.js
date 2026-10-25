@@ -4,7 +4,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   let timerInterval = null;
-  let activeAnswer = null; // { input, button, status, locked }
+  let activeAnswer = null; // { input, status, locked }
 
   function showScreen(name) {
     document.querySelectorAll(".screen").forEach((el) => el.classList.remove("active"));
@@ -24,16 +24,36 @@
   }
 
   function initHomeTabs() {
-    document.querySelectorAll(".tab").forEach((tab) => {
+    const tabs = document.querySelectorAll(".tab");
+    const indicator = $("tab-indicator");
+
+    function moveIndicatorTo(tab) {
+      if (!indicator) return;
+      indicator.style.width = tab.offsetWidth + "px";
+      indicator.style.transform = "translateX(" + tab.offsetLeft + "px)";
+    }
+
+    tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        tabs.forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
+        moveIndicatorTo(tab);
         const tabName = tab.dataset.tab;
         $("panel-create").style.display = tabName === "create" ? "block" : "none";
         $("panel-join").style.display = tabName === "join" ? "block" : "none";
         setHomeError("");
       });
     });
+
+    // Positionne l'indicateur sous l'onglet actif par défaut, sans glissement
+    // visible au premier affichage.
+    const initial = document.querySelector(".tab.active");
+    if (initial && indicator) {
+      indicator.style.transition = "none";
+      moveIndicatorTo(initial);
+      void indicator.offsetWidth;
+      indicator.style.transition = "";
+    }
   }
 
   // Anime un nombre affiché dans `el` de `from` à `to` (ease-out), avec un
@@ -88,15 +108,27 @@
     stopTimer();
     const fill = $("timer-fill");
     fill.classList.remove("low");
+
+    // Une seule translation CSS continue de 100% à 0% sur toute la durée de
+    // la question : pas de ressaut, contrairement à des mises à jour de
+    // largeur par à-coups toutes les 100ms.
+    fill.style.transition = "none";
     fill.style.width = "100%";
+    void fill.offsetWidth; // force le rendu avant de lancer la transition
+    fill.style.transition = "width " + seconds + "s linear";
+    requestAnimationFrame(() => {
+      fill.style.width = "0%";
+    });
+
+    // Minuteur logique séparé (juste pour le son du décompte et la fin du
+    // temps) : ne touche plus jamais à la largeur de la barre.
     const start = Date.now();
     const totalMs = seconds * 1000;
     let lastTickSecond = null;
     timerInterval = setInterval(() => {
       const elapsed = Date.now() - start;
       const remainingMs = Math.max(0, totalMs - elapsed);
-      const ratio = Math.max(0, 1 - elapsed / totalMs);
-      fill.style.width = ratio * 100 + "%";
+      const ratio = remainingMs / totalMs;
       if (ratio <= 0.3) fill.classList.add("low");
 
       const remainingSecond = Math.ceil(remainingMs / 1000);
@@ -115,7 +147,12 @@
   function renderQuestion(payload, handlers) {
     $("question-progress").textContent = "Question " + (payload.index + 1) + "/" + payload.total;
     $("question-category").textContent = payload.category || "";
-    $("question-text").textContent = payload.text;
+
+    const textEl = $("question-text");
+    textEl.textContent = payload.text;
+    textEl.classList.remove("text-in");
+    void textEl.offsetWidth; // relance l'animation d'entrée à chaque question
+    textEl.classList.add("text-in");
 
     const img = $("question-image");
     if (payload.image) {
@@ -131,14 +168,12 @@
     status.textContent = "";
 
     const input = $("libre-input");
-    const button = $("btn-submit-libre");
     input.value = "";
     input.disabled = false;
     input.classList.remove("wrong-flash");
     input.focus();
-    button.disabled = false;
 
-    activeAnswer = { input, button, status, locked: false };
+    activeAnswer = { input, status, locked: false };
 
     const submit = () => {
       if (activeAnswer.locked) return;
@@ -146,14 +181,12 @@
       if (!value) return;
       handlers.onAnswer(value);
     };
-    button.onclick = submit;
     input.onkeydown = (e) => {
       if (e.key === "Enter") submit();
     };
 
     startTimer(payload.timeLimit, () => {
       input.disabled = true;
-      button.disabled = true;
     });
 
     window.Sound.playQuestionStart();
@@ -176,12 +209,11 @@
   // retenter (le chrono, lui, continue de tourner).
   function handleAnswerResult(result) {
     if (!activeAnswer) return;
-    const { input, button, status } = activeAnswer;
+    const { input, status } = activeAnswer;
     if (result.correct) {
       activeAnswer.locked = true;
       input.disabled = true;
       input.classList.remove("wrong-flash");
-      button.disabled = true;
       status.textContent = "✅ Bonne réponse ! +" + result.gained + " points — en attente des autres joueurs…";
       status.style.display = "block";
       window.Sound.playCorrect();
@@ -189,7 +221,6 @@
     } else {
       input.value = "";
       input.disabled = false;
-      button.disabled = false;
       input.focus();
       input.classList.remove("wrong-flash");
       // force le redémarrage de l'animation même si elle vient de jouer
@@ -292,8 +323,8 @@
     banner.className = bannerClass;
     banner.textContent = bannerText;
 
-    const correctText = $("reveal-correct-answer");
-    correctText.textContent = "Réponse(s) acceptée(s) : " + payload.acceptableAnswers.join(", ");
+    $("correct-answer-text").textContent = payload.acceptableAnswers[0];
+    $("correct-answer-tooltip-list").textContent = payload.acceptableAnswers.join(", ");
 
     renderLeaderboardInto($("reveal-leaderboard"), payload.leaderboard, myId);
     window.Sound.playReveal();
