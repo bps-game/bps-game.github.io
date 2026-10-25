@@ -55,6 +55,16 @@
           <div class="code" id="lobby-code">—</div>
         </div>
         <div class="player-list" id="lobby-players"></div>
+
+        <div class="win-score-block">
+          <label class="hint" for="win-score-input">Score pour gagner la partie</label>
+          <div class="win-score-row">
+            <input type="number" id="win-score-input" min="1" max="2000" step="10" style="display: none" />
+            <span class="win-score-value" id="win-score-value"></span>
+            <span class="hint">pts</span>
+          </div>
+        </div>
+
         <p class="hint" id="lobby-hint">En attente que l'hôte démarre la partie…</p>
         <button class="btn-primary" id="btn-start-game" style="display: none">Démarrer la partie</button>
       </div>
@@ -97,7 +107,7 @@
           <p class="answer-status" id="answer-status" style="display: none"></p>
         </div>
         <aside class="card scoreboard-panel">
-          <h3 class="scoreboard-title">Scores</h3>
+          <h3 class="scoreboard-title" id="scoreboard-title">Scores</h3>
           <div class="scoreboard-list" id="live-scoreboard"></div>
         </aside>
       </div>
@@ -124,6 +134,7 @@
     <div id="screen-end" class="screen">
       <div class="card">
         <h2 style="text-align: center; margin-top: 0">🏆 Résultats finaux</h2>
+        <p class="end-banner" id="end-banner"></p>
         <div class="podium" id="end-podium"></div>
         <div class="leaderboard" id="end-leaderboard"></div>
         <button class="btn-secondary" id="btn-restart" style="margin-top: 14px">Retour à l'accueil</button>

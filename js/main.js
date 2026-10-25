@@ -53,7 +53,7 @@
           myPseudo = pseudo;
           GameEngine.hostInit(myId, myPseudo);
           UI.setLobbyCode(code, true);
-          UI.renderLobby(GameEngine.getPlayers(), true, myId);
+          UI.renderLobby(GameEngine.getPlayers(), true, myId, GameEngine.getWinScore());
           UI.showScreen("lobby");
           createBtn.disabled = false;
           createBtn.textContent = "Créer la partie";
@@ -111,6 +111,10 @@
   }
 
   function wireLobbyScreen() {
+    document.getElementById("win-score-input").addEventListener("change", (e) => {
+      GameEngine.hostSetWinScore(e.target.value);
+    });
+
     document.getElementById("btn-start-game").addEventListener("click", async () => {
       const btn = document.getElementById("btn-start-game");
       btn.disabled = true;
@@ -163,8 +167,8 @@
   }
 
   function wireGameEngine() {
-    GameEngine.on("lobbyUpdate", (players) => {
-      UI.renderLobby(players, role === "host", myId);
+    GameEngine.on("lobbyUpdate", (players, winScore) => {
+      UI.renderLobby(players, role === "host", myId, winScore);
     });
 
     GameEngine.on("question", (payload) => {

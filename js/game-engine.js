@@ -24,6 +24,7 @@
   const MAX_POINTS_PER_QUESTION = 20;
   const MIN_POINTS_PER_QUESTION = 1; // une bonne réponse rapporte toujours au moins 1 point
   const SCORE_DECAY_WINDOW_MS = 12000;
+  const DEFAULT_WIN_SCORE = 100; // seuil de victoire par défaut, réglable par l'hôte dans le lobby
 
   // Plage Unicode des diacritiques combinants (0300-036F), construite via
   // String.fromCharCode pour éviter tout souci d'échappement de séquence
@@ -185,6 +186,7 @@
     let firstCorrectAt = null; // instant (ms) de la première bonne réponse de la question en cours
     let currentAnswers = new Map(); // peerId -> { answer, gained } (réponses CORRECTES verrouillées)
     let lastWrongAttempt = new Map(); // peerId -> dernier texte tenté (faux), pour l'affichage en correction
+    let winScore = DEFAULT_WIN_SCORE; // seuil de points pour remporter la partie, réglé par l'hôte
 
     // players: peerId -> { id, pseudo, score, isHost }
     const players = new Map();
@@ -213,9 +215,9 @@
     }
 
     function broadcastLobby() {
-      const payload = { type: MSG.LOBBY_UPDATE, players: playersArray() };
+      const payload = { type: MSG.LOBBY_UPDATE, players: playersArray(), winScore };
       window.Network.broadcast(payload);
-      if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray());
+      if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray(), winScore);
     }
 
     // Statut de chaque joueur pour la question en cours : trouvé, en train
@@ -248,8 +250,16 @@
     function hostInit(myId, myPseudo) {
       role = "host";
       hostOwnId = myId;
+      winScore = DEFAULT_WIN_SCORE;
       players.clear();
       players.set(myId, { id: myId, pseudo: myPseudo, score: 0, streak: 0, isHost: true });
+    }
+
+    // Réglable uniquement depuis le lobby, avant le lancement de la partie.
+    function hostSetWinScore(value) {
+      if (currentIndex !== -1) return; // partie déjà lancée : on n'y touche plus
+      winScore = Math.max(1, Math.round(Number(value) || DEFAULT_WIN_SCORE));
+      broadcastLobby();
     }
 
     function hostAddPlayer(peerId, pseudo) {
@@ -275,7 +285,7 @@
       clearTimeout(revealTimer);
       currentIndex++;
       if (currentIndex >= questions.length) {
-        hostEndGame();
+        hostEndGame("no-more-questions");
         return;
       }
       currentAnswers = new Map();
@@ -290,6 +300,7 @@
         text: q.question,
         media: q.media || null,
         timeLimit: q.timeLimit,
+        winScore,
       };
       window.Network.broadcast(payload);
       if (callbacks.question) callbacks.question(payload);
@@ -359,21 +370,36 @@
         });
       });
 
+      const leaderboard = sortedLeaderboard();
       const payload = {
         type: MSG.REVEAL,
         index: currentIndex,
         acceptableAnswers: q.acceptableAnswers,
         results,
-        leaderboard: sortedLeaderboard(),
+        leaderboard,
       };
       window.Network.broadcast(payload);
       if (callbacks.reveal) callbacks.reveal(payload);
 
-      revealTimer = setTimeout(() => hostNextQuestion(), REVEAL_DURATION_MS);
+      // Le seuil de victoire prime sur le nombre de questions : dès qu'un
+      // joueur l'atteint (ou le dépasse), la partie s'arrête après cette
+      // correction, même s'il reste des questions.
+      if (leaderboard.length > 0 && leaderboard[0].score >= winScore) {
+        revealTimer = setTimeout(() => hostEndGame("threshold"), REVEAL_DURATION_MS);
+      } else {
+        revealTimer = setTimeout(() => hostNextQuestion(), REVEAL_DURATION_MS);
+      }
     }
 
-    function hostEndGame() {
-      const payload = { type: MSG.GAME_END, leaderboard: sortedLeaderboard() };
+    function hostEndGame(reason) {
+      clearTimeout(questionTimer);
+      clearTimeout(revealTimer);
+      const payload = {
+        type: MSG.GAME_END,
+        leaderboard: sortedLeaderboard(),
+        winScore,
+        reason: reason || "no-more-questions",
+      };
       window.Network.broadcast(payload);
       if (callbacks.gameEnd) callbacks.gameEnd(payload);
     }
@@ -384,7 +410,8 @@
       if (data.type === MSG.LOBBY_UPDATE) {
         players.clear();
         data.players.forEach((p) => players.set(p.id, p));
-        if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players);
+        winScore = data.winScore || winScore;
+        if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players, winScore);
       } else if (data.type === MSG.QUESTION) {
         if (callbacks.question) callbacks.question(data);
       } else if (data.type === MSG.ANSWER_RESULT) {
@@ -406,11 +433,13 @@
       hostAddPlayer,
       hostRemovePlayer,
       hostStartGame,
+      hostSetWinScore,
       hostHandleAttempt,
       clientHandleMessage,
       getPlayers: playersArray,
       getRole: () => role,
       getCurrentIndex: () => currentIndex,
+      getWinScore: () => winScore,
       // exposés pour les tests manuels / debug
       _internal: { normalize, levenshtein, isAnswerCorrect, computeScore },
     };

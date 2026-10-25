@@ -103,7 +103,7 @@
     requestAnimationFrame(tick);
   }
 
-  function renderLobby(players, isHost, myId) {
+  function renderLobby(players, isHost, myId, winScore) {
     const list = $("lobby-players");
     list.innerHTML = "";
     players.forEach((p) => {
@@ -116,6 +116,15 @@
     $("lobby-hint").textContent = isHost
       ? "Lance la partie quand tout le monde est prêt."
       : "En attente que l'hôte démarre la partie…";
+
+    const winScoreInput = $("win-score-input");
+    const winScoreValue = $("win-score-value");
+    winScoreInput.style.display = isHost ? "inline-block" : "none";
+    winScoreValue.style.display = isHost ? "none" : "inline";
+    if (typeof winScore === "number") {
+      if (document.activeElement !== winScoreInput) winScoreInput.value = winScore;
+      winScoreValue.textContent = winScore;
+    }
   }
 
   function setLobbyCode(code, isHost) {
@@ -207,6 +216,9 @@
   function renderQuestion(payload, handlers) {
     $("question-progress").textContent = "Question " + (payload.index + 1) + "/" + payload.total;
     $("question-category").textContent = payload.category || "";
+    if (typeof payload.winScore === "number") {
+      $("scoreboard-title").textContent = "Scores (objectif : " + payload.winScore + " pts)";
+    }
 
     const textEl = $("question-text");
     textEl.textContent = payload.text;
@@ -431,6 +443,15 @@
   }
 
   function renderEnd(payload, myId) {
+    const banner = $("end-banner");
+    const champion = payload.leaderboard[0];
+    if (payload.reason === "threshold" && champion) {
+      banner.textContent =
+        "🏆 " + champion.pseudo + " a atteint " + payload.winScore + " points et remporte la partie !";
+    } else {
+      banner.textContent = "📋 Plus de questions disponibles — classement final";
+    }
+
     const podium = $("end-podium");
     podium.innerHTML = "";
     const order = ["silver", "gold", "bronze"]; // ordre visuel : 2e, 1er, 3e
