@@ -104,7 +104,7 @@
       btn.textContent = "Chargement des questions…";
       try {
         const all = await window.Questions.load();
-        const prepared = window.Questions.shuffle(all).map(window.Questions.shuffleChoices);
+        const prepared = window.Questions.shuffle(all);
         GameEngine.hostStartGame(prepared);
       } catch (err) {
         UI.toast("Erreur de chargement des questions : " + err.message);

@@ -95,53 +95,30 @@
       img.removeAttribute("src");
     }
 
-    const qcmArea = $("qcm-area");
-    const libreArea = $("libre-area");
     const status = $("answer-status");
     status.style.display = "none";
     status.textContent = "";
 
-    if (payload.qtype === "qcm") {
-      qcmArea.style.display = "grid";
-      libreArea.style.display = "none";
-      qcmArea.innerHTML = "";
-      payload.choices.forEach((choiceText, index) => {
-        const btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.textContent = choiceText;
-        btn.addEventListener("click", () => {
-          if (btn.disabled) return;
-          qcmArea.querySelectorAll(".choice-btn").forEach((b) => (b.disabled = true));
-          btn.classList.add("selected");
-          showAnswered();
-          handlers.onAnswer(index);
-        });
-        qcmArea.appendChild(btn);
-      });
-    } else {
-      qcmArea.style.display = "none";
-      libreArea.style.display = "block";
-      const input = $("libre-input");
-      input.value = "";
-      input.disabled = false;
-      $("btn-submit-libre").disabled = false;
-      const submit = () => {
-        const value = input.value.trim();
-        if (!value) return;
-        input.disabled = true;
-        $("btn-submit-libre").disabled = true;
-        showAnswered();
-        handlers.onAnswer(value);
-      };
-      $("btn-submit-libre").onclick = submit;
-      input.onkeydown = (e) => {
-        if (e.key === "Enter") submit();
-      };
-    }
+    const input = $("libre-input");
+    input.value = "";
+    input.disabled = false;
+    input.focus();
+    $("btn-submit-libre").disabled = false;
+    const submit = () => {
+      const value = input.value.trim();
+      if (!value) return;
+      input.disabled = true;
+      $("btn-submit-libre").disabled = true;
+      showAnswered();
+      handlers.onAnswer(value);
+    };
+    $("btn-submit-libre").onclick = submit;
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") submit();
+    };
 
     startTimer(payload.timeLimit, () => {
-      qcmArea.querySelectorAll(".choice-btn").forEach((b) => (b.disabled = true));
-      $("libre-input").disabled = true;
+      input.disabled = true;
       $("btn-submit-libre").disabled = true;
     });
 
@@ -163,20 +140,14 @@
       banner.textContent = "✅ Bonne réponse ! +" + mine.gained + " points";
     } else if (mine && mine.answered) {
       banner.className = "reveal-banner incorrect";
-      banner.textContent = "❌ Mauvaise réponse";
+      banner.textContent = "❌ Mauvaise réponse (tu as répondu « " + mine.submitted + " »)";
     } else {
       banner.className = "reveal-banner incorrect";
       banner.textContent = "⏱️ Temps écoulé, pas de réponse";
     }
 
     const correctText = $("reveal-correct-answer");
-    if (payload.qtype === "qcm" && typeof payload.correctIndex === "number") {
-      correctText.textContent = "";
-    } else if (payload.acceptableAnswers) {
-      correctText.textContent = "Réponse(s) acceptée(s) : " + payload.acceptableAnswers.join(", ");
-    } else {
-      correctText.textContent = "";
-    }
+    correctText.textContent = "Réponse(s) acceptée(s) : " + payload.acceptableAnswers.join(", ");
 
     renderLeaderboardInto($("reveal-leaderboard"), payload.leaderboard, myId, true);
     showScreen("reveal");

@@ -1,4 +1,4 @@
-// Machine à états du jeu + calcul des scores.
+// Machine à états du jeu + correction des réponses libres + calcul des scores.
 // L'hôte (celui qui a créé la salle) fait tourner toute la logique et diffuse
 // l'état ; les autres joueurs ne font qu'afficher ce qu'ils reçoivent et
 // renvoyer leurs réponses à l'hôte. Cela évite tout besoin de serveur.
@@ -14,15 +14,38 @@
 
   const REVEAL_DURATION_MS = 6000;
 
+  // ---------- Correction des réponses libres ----------
+  //
+  // Toutes les questions sont à réponse libre (texte tapé au clavier). Une
+  // réponse est acceptée si elle correspond à l'une des `acceptableAnswers`
+  // de la question, selon plusieurs stratégies cumulées :
+  //  1. Égalité exacte après normalisation (accents/casse/ponctuation).
+  //  2. Tolérance aux fautes de frappe (distance de Levenshtein, proportionnelle
+  //     à la longueur du texte).
+  //  3. Titre partiel : un sous-titre ou une forme raccourcie est accepté dès
+  //     lors qu'il correspond à une suite de mots CONTIGUË de la réponse
+  //     complète (ex : "Tears of the Kingdom" dans "The Legend of Zelda:
+  //     Tears of the Kingdom"), dans un sens comme dans l'autre.
+  //  4. Acronymes/sigles : les initiales de n'importe quelle suite d'au moins
+  //     3 mots consécutifs de la réponse sont acceptées (ex : "TOTK").
+  //
+  // Résultat concret : il suffit en général de renseigner le titre complet
+  // dans `acceptableAnswers` pour que les formes raccourcies et les sigles
+  // les plus courants soient reconnus automatiquement.
+
   function normalize(str) {
     return (str || "")
       .toString()
       .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
+      .replace(/[̀-ͯ]/g, "") // accents
       .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/[^a-z0-9]+/g, " ") // ponctuation -> espace (jamais fusionnée)
       .trim()
       .replace(/\s+/g, " ");
+  }
+
+  function wordsOf(normalized) {
+    return normalized ? normalized.split(" ").filter(Boolean) : [];
   }
 
   function levenshtein(a, b) {
@@ -45,20 +68,82 @@
   }
 
   function fuzzyTolerance(len) {
-    if (len <= 4) return 0;
-    if (len <= 8) return 1;
-    return 2;
+    if (len <= 3) return 0;
+    if (len <= 7) return 1;
+    if (len <= 15) return 2;
+    return 3;
   }
 
-  function isLibreAnswerCorrect(submitted, acceptableAnswers) {
-    const normSubmitted = normalize(submitted);
-    if (!normSubmitted) return false;
-    const tolerance = fuzzyTolerance(normSubmitted.length);
-    return (acceptableAnswers || []).some((accepted) => {
-      const normAccepted = normalize(accepted);
-      if (tolerance === 0) return normSubmitted === normAccepted;
-      return levenshtein(normSubmitted, normAccepted) <= tolerance;
-    });
+  // Suite de mots contiguë, avec tolérance aux fautes de frappe : on cherche,
+  // parmi toutes les suites de mots contiguës de la plus longue réponse (de
+  // longueur proche de la plus courte), celle qui est la plus proche
+  // (distance de Levenshtein) de la réponse la plus courte. Couvre à la fois
+  // "titre partiel" (distance 0) et "faute de frappe dans un titre partiel".
+  // L'écart de longueur est plafonné pour éviter qu'une réponse interminable
+  // ne valide tout par simple inclusion.
+  function bestWordRunDistance(shorterWords, longerWords) {
+    const shorterStr = shorterWords.join(" ");
+    const minLen = Math.max(1, shorterWords.length - 1);
+    const maxLen = Math.min(longerWords.length, shorterWords.length + 2);
+    let best = Infinity;
+    for (let len = minLen; len <= maxLen; len++) {
+      for (let start = 0; start + len <= longerWords.length; start++) {
+        const run = longerWords.slice(start, start + len).join(" ");
+        const d = levenshtein(shorterStr, run);
+        if (d < best) best = d;
+      }
+    }
+    return best;
+  }
+
+  function matchesContiguousSubset(subWords, accWords) {
+    if (subWords.length < 2 || accWords.length < 2) return false;
+    const shorter = subWords.length <= accWords.length ? subWords : accWords;
+    const longer = subWords.length <= accWords.length ? accWords : subWords;
+    if (longer.length - shorter.length > 5) return false;
+    const tolerance = fuzzyTolerance(shorter.join(" ").length);
+    return bestWordRunDistance(shorter, longer) <= tolerance;
+  }
+
+  function acronymOf(wordList) {
+    return wordList.map((w) => w[0]).join("");
+  }
+
+  // Teste si le texte tapé (sans espaces) correspond au sigle d'une suite
+  // d'au moins 3 mots consécutifs de la réponse acceptée.
+  function matchesAcronym(submittedNoSpace, accWords) {
+    if (submittedNoSpace.length < 3) return false;
+    for (let start = 0; start < accWords.length; start++) {
+      for (let len = 3; start + len <= accWords.length; len++) {
+        if (acronymOf(accWords.slice(start, start + len)) === submittedNoSpace) return true;
+      }
+    }
+    return false;
+  }
+
+  function matchesOneAnswer(submittedNorm, submittedWords, submittedNoSpace, accepted) {
+    const acceptedNorm = normalize(accepted);
+    if (!acceptedNorm) return false;
+    if (submittedNorm === acceptedNorm) return true;
+
+    const tolerance = fuzzyTolerance(Math.max(submittedNorm.length, acceptedNorm.length));
+    if (levenshtein(submittedNorm, acceptedNorm) <= tolerance) return true;
+
+    const acceptedWords = wordsOf(acceptedNorm);
+    if (matchesContiguousSubset(submittedWords, acceptedWords)) return true;
+    if (acceptedWords.length >= 3 && matchesAcronym(submittedNoSpace, acceptedWords)) return true;
+
+    return false;
+  }
+
+  function isAnswerCorrect(submitted, acceptableAnswers) {
+    const submittedNorm = normalize(submitted);
+    if (!submittedNorm) return false;
+    const submittedWords = wordsOf(submittedNorm);
+    const submittedNoSpace = submittedNorm.replace(/\s+/g, "");
+    return (acceptableAnswers || []).some((accepted) =>
+      matchesOneAnswer(submittedNorm, submittedWords, submittedNoSpace, accepted)
+    );
   }
 
   function computeScore(basePoints, timeLimitSeconds, elapsedMs) {
@@ -149,10 +234,8 @@
         index: currentIndex,
         total: questions.length,
         category: q.category,
-        qtype: q.type,
         text: q.question,
         image: q.image || null,
-        choices: q.type === "qcm" ? q.choices : null,
         timeLimit: q.timeLimit,
       };
       window.Network.broadcast(payload);
@@ -180,11 +263,7 @@
         let correct = false;
         let gained = 0;
         if (entry) {
-          if (q.type === "qcm") {
-            correct = entry.answer === q.correctIndex;
-          } else {
-            correct = isLibreAnswerCorrect(entry.answer, q.acceptableAnswers);
-          }
+          correct = isAnswerCorrect(entry.answer, q.acceptableAnswers);
           if (correct) gained = computeScore(q.points, q.timeLimit, entry.elapsedMs);
         }
         player.score += gained;
@@ -192,6 +271,7 @@
           id: peerId,
           pseudo: player.pseudo,
           answered: !!entry,
+          submitted: entry ? entry.answer : null,
           correct,
           gained,
           totalScore: player.score,
@@ -201,9 +281,7 @@
       const payload = {
         type: MSG.REVEAL,
         index: currentIndex,
-        qtype: q.type,
-        correctIndex: q.type === "qcm" ? q.correctIndex : null,
-        acceptableAnswers: q.type === "libre" ? q.acceptableAnswers : null,
+        acceptableAnswers: q.acceptableAnswers,
         results,
         leaderboard: sortedLeaderboard(),
       };
@@ -248,8 +326,8 @@
       getPlayers: playersArray,
       getRole: () => role,
       getCurrentIndex: () => currentIndex,
-      // exposés pour les tests unitaires manuels / debug
-      _internal: { normalize, levenshtein, isLibreAnswerCorrect, computeScore },
+      // exposés pour les tests manuels / debug
+      _internal: { normalize, levenshtein, isAnswerCorrect, computeScore },
     };
   }
 

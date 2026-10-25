@@ -355,47 +355,6 @@ button:disabled {
   display: block;
 }
 
-.choices-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-@media (max-width: 480px) {
-  .choices-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.choice-btn {
-  background: var(--bg-elevated);
-  border: 2px solid var(--card-border);
-  color: var(--text);
-  padding: 16px 14px;
-  text-align: left;
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-.choice-btn:hover:not(:disabled) {
-  border-color: var(--primary);
-}
-
-.choice-btn.selected {
-  border-color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 18%, var(--bg-elevated));
-}
-
-.choice-btn.correct {
-  border-color: var(--good);
-  background: color-mix(in srgb, var(--good) 20%, var(--bg-elevated));
-}
-
-.choice-btn.incorrect {
-  border-color: var(--bad);
-  background: color-mix(in srgb, var(--bad) 20%, var(--bg-elevated));
-}
-
 .answer-status {
   text-align: center;
   color: var(--text-dim);

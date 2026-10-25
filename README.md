@@ -2,7 +2,7 @@
 
 Quiz de culture générale multijoueur en temps réel, façon Popsauce — **100% gratuit, sans compte, sans serveur à payer**.
 
-Tout le monde répond en même temps aux mêmes questions (QCM ou réponse libre), les points dépendent de la rapidité, et le classement se met à jour en direct.
+Tout le monde répond en même temps aux mêmes questions, à l'écrit (pas de QCM), avec une correction tolérante aux fautes de frappe, aux titres partiels et aux acronymes. Les points dépendent de la rapidité, et le classement se met à jour en direct.
 
 ## Comment ça marche techniquement
 
