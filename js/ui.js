@@ -139,6 +139,7 @@
     if (result.correct) {
       activeAnswer.locked = true;
       input.disabled = true;
+      input.classList.remove("wrong-flash");
       button.disabled = true;
       status.textContent = "✅ Bonne réponse ! +" + result.gained + " points — en attente des autres joueurs…";
       status.style.display = "block";
@@ -152,6 +153,45 @@
       void input.offsetWidth;
       input.classList.add("wrong-flash");
     }
+  }
+
+  // Tableau des scores affiché à droite pendant la question : qui a trouvé,
+  // qui tâtonne encore (avec sa dernière tentative fausse), classé par score.
+  function renderScoreboard(players, myId) {
+    const container = $("live-scoreboard");
+    container.innerHTML = "";
+    players.forEach((p) => {
+      const row = document.createElement("div");
+      row.className = "score-row " + p.status + (p.id === myId ? " you" : "");
+
+      let statusText;
+      if (p.status === "correct") {
+        statusText = "✅ A trouvé !";
+      } else if (p.status === "wrong") {
+        statusText = "« " + p.lastWrongAnswer + " »";
+      } else {
+        statusText = "en réflexion…";
+      }
+
+      const top = document.createElement("div");
+      top.className = "score-row-top";
+      const name = document.createElement("span");
+      name.className = "score-row-name";
+      name.textContent = p.pseudo;
+      const points = document.createElement("span");
+      points.className = "score-row-points";
+      points.textContent = p.score + " pts";
+      top.appendChild(name);
+      top.appendChild(points);
+
+      const status = document.createElement("div");
+      status.className = "score-row-status";
+      status.textContent = statusText;
+
+      row.appendChild(top);
+      row.appendChild(status);
+      container.appendChild(row);
+    });
   }
 
   function renderReveal(payload, myId) {
@@ -237,6 +277,7 @@
     setLobbyCode,
     renderQuestion,
     handleAnswerResult,
+    renderScoreboard,
     renderReveal,
     renderEnd,
     stopTimer,

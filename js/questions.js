@@ -14,7 +14,7 @@
       throw new Error("questions.json doit contenir un tableau non vide.");
     }
     list.forEach((q, i) => {
-      if (!q.id || !q.question || !q.timeLimit || !q.points) {
+      if (!q.id || !q.question || !q.timeLimit) {
         throw new Error(`Question #${i} invalide : champs obligatoires manquants.`);
       }
       if (!Array.isArray(q.acceptableAnswers) || q.acceptableAnswers.length === 0) {

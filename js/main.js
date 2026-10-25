@@ -170,6 +170,10 @@
       UI.handleAnswerResult(payload);
     });
 
+    GameEngine.on("liveStatus", (payload) => {
+      UI.renderScoreboard(payload.players, myId);
+    });
+
     GameEngine.on("reveal", (payload) => {
       UI.renderReveal(payload, myId);
     });

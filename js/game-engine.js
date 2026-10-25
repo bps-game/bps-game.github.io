@@ -9,11 +9,21 @@
     QUESTION: "QUESTION",
     ANSWER: "ANSWER",
     ANSWER_RESULT: "ANSWER_RESULT",
+    LIVE_STATUS: "LIVE_STATUS",
     REVEAL: "REVEAL",
     GAME_END: "GAME_END",
   };
 
   const REVEAL_DURATION_MS = 6000;
+
+  // Barème : le premier joueur à trouver la bonne réponse a toujours le
+  // score maximum. Les suivants reçoivent de moins en moins de points au
+  // fur et à mesure que le temps passe DEPUIS CETTE PREMIÈRE BONNE RÉPONSE
+  // (et non depuis le début de la question) — jusqu'à un plancher, atteint
+  // après SCORE_DECAY_WINDOW_MS.
+  const MAX_POINTS_PER_QUESTION = 20;
+  const MIN_POINTS_PER_QUESTION = 0;
+  const SCORE_DECAY_WINDOW_MS = 12000;
 
   // Plage Unicode des diacritiques combinants (0300-036F), construite via
   // String.fromCharCode pour éviter tout souci d'échappement de séquence
@@ -155,11 +165,14 @@
     );
   }
 
-  function computeScore(basePoints, timeLimitSeconds, elapsedMs) {
-    const elapsedSeconds = elapsedMs / 1000;
-    const ratio = Math.min(1, Math.max(0, elapsedSeconds / timeLimitSeconds));
-    const factor = 1 - ratio * 0.5; // 100% des points si instantané, 50% si pile dans les temps
-    return Math.round(basePoints * factor);
+  // Score d'une bonne réponse qui n'est PAS la première : décroît de
+  // MAX_POINTS_PER_QUESTION à MIN_POINTS_PER_QUESTION au fil de
+  // SCORE_DECAY_WINDOW_MS écoulées depuis la première bonne réponse.
+  function computeScore(elapsedSinceFirstCorrectMs) {
+    const ratio = Math.min(1, Math.max(0, elapsedSinceFirstCorrectMs / SCORE_DECAY_WINDOW_MS));
+    return Math.round(
+      MAX_POINTS_PER_QUESTION - ratio * (MAX_POINTS_PER_QUESTION - MIN_POINTS_PER_QUESTION)
+    );
   }
 
   function createGameEngine() {
@@ -169,8 +182,8 @@
     let currentIndex = -1;
     let questionTimer = null;
     let revealTimer = null;
-    let questionStartedAt = 0;
-    let currentAnswers = new Map(); // peerId -> { answer, elapsedMs, gained } (réponses CORRECTES verrouillées)
+    let firstCorrectAt = null; // instant (ms) de la première bonne réponse de la question en cours
+    let currentAnswers = new Map(); // peerId -> { answer, gained } (réponses CORRECTES verrouillées)
     let lastWrongAttempt = new Map(); // peerId -> dernier texte tenté (faux), pour l'affichage en correction
 
     // players: peerId -> { id, pseudo, score, isHost }
@@ -180,6 +193,7 @@
       lobbyUpdate: null,
       question: null,
       answerResult: null,
+      liveStatus: null,
       reveal: null,
       gameEnd: null,
     };
@@ -202,6 +216,30 @@
       const payload = { type: MSG.LOBBY_UPDATE, players: playersArray() };
       window.Network.broadcast(payload);
       if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray());
+    }
+
+    // Statut de chaque joueur pour la question en cours : trouvé, en train
+    // d'essayer (avec sa dernière tentative fausse), ou encore muet.
+    function buildLiveStatus() {
+      const list = playersArray().map((player) => {
+        const correctEntry = currentAnswers.get(player.id);
+        const wrongAttempt = lastWrongAttempt.get(player.id);
+        return {
+          id: player.id,
+          pseudo: player.pseudo,
+          score: player.score,
+          status: correctEntry ? "correct" : wrongAttempt ? "wrong" : "none",
+          lastWrongAnswer: wrongAttempt || null,
+        };
+      });
+      list.sort((a, b) => b.score - a.score);
+      return list;
+    }
+
+    function broadcastLiveStatus() {
+      const payload = { type: MSG.LIVE_STATUS, players: buildLiveStatus() };
+      window.Network.broadcast(payload);
+      if (callbacks.liveStatus) callbacks.liveStatus(payload);
     }
 
     // ---------- Rôle hôte ----------
@@ -241,7 +279,7 @@
       }
       currentAnswers = new Map();
       lastWrongAttempt = new Map();
-      questionStartedAt = Date.now();
+      firstCorrectAt = null;
       const q = questions[currentIndex];
       const payload = {
         type: MSG.QUESTION,
@@ -254,6 +292,7 @@
       };
       window.Network.broadcast(payload);
       if (callbacks.question) callbacks.question(payload);
+      broadcastLiveStatus();
       questionTimer = setTimeout(() => hostRevealAnswer(), q.timeLimit * 1000 + 300);
     }
 
@@ -268,11 +307,16 @@
       let payload;
 
       if (correct) {
-        const elapsedMs = Date.now() - questionStartedAt;
-        const gained = computeScore(q.points, q.timeLimit, elapsedMs);
+        let gained;
+        if (firstCorrectAt === null) {
+          firstCorrectAt = Date.now();
+          gained = MAX_POINTS_PER_QUESTION; // le premier a toujours le score maximum
+        } else {
+          gained = computeScore(Date.now() - firstCorrectAt);
+        }
         const player = players.get(peerId);
         player.score += gained;
-        currentAnswers.set(peerId, { answer, elapsedMs, gained });
+        currentAnswers.set(peerId, { answer, gained });
         payload = { type: MSG.ANSWER_RESULT, correct: true, gained, totalScore: player.score };
       } else {
         lastWrongAttempt.set(peerId, answer);
@@ -284,6 +328,7 @@
       } else {
         window.Network.send(peerId, payload);
       }
+      broadcastLiveStatus();
 
       if (correct && currentAnswers.size >= players.size) {
         clearTimeout(questionTimer);
@@ -340,6 +385,8 @@
         if (callbacks.question) callbacks.question(data);
       } else if (data.type === MSG.ANSWER_RESULT) {
         if (callbacks.answerResult) callbacks.answerResult(data);
+      } else if (data.type === MSG.LIVE_STATUS) {
+        if (callbacks.liveStatus) callbacks.liveStatus(data);
       } else if (data.type === MSG.REVEAL) {
         if (callbacks.reveal) callbacks.reveal(data);
       } else if (data.type === MSG.GAME_END) {

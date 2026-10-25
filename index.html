@@ -59,22 +59,28 @@
       </div>
     </div>
 
-    <div id="screen-question" class="screen">
-      <div class="card">
-        <div class="progress-row">
-          <span id="question-progress">Question 1/40</span>
-          <span id="question-category"></span>
-        </div>
-        <div class="timer-bar"><div class="timer-bar-fill" id="timer-fill"></div></div>
-        <p class="question-text" id="question-text"></p>
-        <img id="question-image" class="question-image" style="display: none" alt="" />
-        <div id="libre-area">
-          <div class="field">
-            <input type="text" id="libre-input" placeholder="Ta réponse…" autocomplete="off" />
+    <div id="screen-question" class="screen with-sidebar">
+      <div class="question-layout">
+        <div class="card question-card">
+          <div class="progress-row">
+            <span id="question-progress">Question 1/40</span>
+            <span id="question-category"></span>
           </div>
-          <button class="btn-primary" id="btn-submit-libre">Valider</button>
+          <div class="timer-bar"><div class="timer-bar-fill" id="timer-fill"></div></div>
+          <p class="question-text" id="question-text"></p>
+          <img id="question-image" class="question-image" style="display: none" alt="" />
+          <div id="libre-area">
+            <div class="field">
+              <input type="text" id="libre-input" placeholder="Ta réponse…" autocomplete="off" />
+            </div>
+            <button class="btn-primary" id="btn-submit-libre">Valider</button>
+          </div>
+          <p class="answer-status" id="answer-status" style="display: none"></p>
         </div>
-        <p class="answer-status" id="answer-status" style="display: none"></p>
+        <aside class="card scoreboard-panel">
+          <h3 class="scoreboard-title">Scores</h3>
+          <div class="scoreboard-list" id="live-scoreboard"></div>
+        </aside>
       </div>
     </div>
 

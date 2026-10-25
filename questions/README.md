@@ -14,10 +14,18 @@ Toutes les questions sont **à réponse libre** (tapée au clavier) — il n'y a
   "image": null,                 // optionnel : chemin relatif, ex "assets/img/questions/q41.jpg", sinon null
 
   "acceptableAnswers": ["La réponse complète"],
-  "timeLimit": 18,                // secondes laissées aux joueurs pour répondre
-  "points": 1000                   // points de base si bonne réponse (bonus de rapidité ajouté par-dessus)
+  "timeLimit": 18                // secondes laissées aux joueurs pour répondre
 }
 ```
+
+## Comment les points sont calculés
+
+Chaque question rapporte entre **0 et 20 points**, et ça ne dépend pas du temps écoulé depuis le début de la question, mais du temps écoulé **depuis la première bonne réponse** :
+
+- Le premier joueur à trouver la bonne réponse a toujours **20 points**, quel que soit le temps qu'il a mis.
+- À partir de cet instant, les points des bonnes réponses suivantes diminuent progressivement, jusqu'à un plancher de 0 point environ 12 secondes après cette première bonne réponse (au-delà, une bonne réponse rapporte simplement le minimum).
+
+Ça encourage à répondre vite une fois qu'on sait que quelqu'un a déjà trouvé, plutôt que de comparer chaque joueur au chrono global de la question.
 
 ## Comment la correction fonctionne
 
@@ -35,6 +43,6 @@ Le moteur du jeu compare ce que le joueur a tapé à chaque entrée de `acceptab
 - **Un seul mot/nombre comme réponse** (ex : `"206"`, `"Mario"`) : une seule entrée dans `acceptableAnswers` suffit largement.
 - **Titres longs ou noms propres composés** : mets le titre complet et officiel, la détection de titre partiel et de sigle fera le reste. Ajoute une 2e entrée seulement si tu veux couvrir un surnom vraiment différent (ex : un jeu connu sous deux noms totalement distincts selon les régions).
 - **Images** : dépose l'image dans `assets/img/questions/` et référence-la avec son chemin relatif dans le champ `image`. Pas d'image = laisse `null`.
-- **Temps/points** : `15s` pour une réponse courte (nombre, un seul mot) et `18-22s` pour une réponse plus longue à taper sont de bons points de départ.
+- **Temps** : `15s` pour une réponse courte (nombre, un seul mot) et `18-22s` pour une réponse plus longue à taper sont de bons points de départ. C'est juste la fenêtre pendant laquelle on peut encore répondre — ça n'influence plus le nombre de points gagnés (voir ci-dessus).
 - Le jeu mélange l'**ordre des questions** à chaque partie — pas besoin de les ranger dans un ordre précis dans le fichier.
 - Si le fichier JSON contient une erreur de syntaxe (virgule oubliée, guillemet manquant...), le jeu affichera une erreur de chargement au démarrage. Un outil en ligne comme [jsonlint.com](https://jsonlint.com/) permet de vérifier rapidement la validité du fichier avant de le pousser sur GitHub.
