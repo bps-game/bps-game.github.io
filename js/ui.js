@@ -238,7 +238,6 @@
     input.classList.remove("wrong-flash");
     lastDisplayedAnswer = "";
     syncAnswerDisplay();
-    input.focus();
 
     activeAnswer = { input, status, locked: false };
 
@@ -260,6 +259,7 @@
 
     window.Sound.playQuestionStart();
     showScreen("question");
+    input.focus(); // après showScreen : focuser un champ encore display:none échoue silencieusement
   }
 
   function spawnFloatingPoints(gained) {

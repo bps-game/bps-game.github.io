@@ -147,6 +147,16 @@
   </div>
 
   <button class="mute-btn" id="btn-mute" title="Couper/activer le son" aria-label="Couper ou activer le son">🔊</button>
+
+  <div class="account-widget" id="account-widget">
+    <button class="account-btn" id="btn-account-signin">Se connecter avec Google</button>
+    <div class="account-signed-in" id="account-signed-in" style="display: none">
+      <span class="account-name" id="account-name"></span>
+      <a class="account-link" href="editor.html">📝 Proposer une question</a>
+      <button class="account-signout" id="btn-account-signout">Déconnexion</button>
+    </div>
+  </div>
+
   <canvas id="confetti-canvas"></canvas>
   <div class="toast" id="toast"></div>
 
@@ -158,5 +168,6 @@
   <script src="js/questions.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
+  <script type="module" src="js/account-widget.js"></script>
 </body>
 </html>
