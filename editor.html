@@ -37,6 +37,26 @@
       <input type="file" id="file-input" accept="application/json" style="display: none" />
     </div>
 
+    <div class="card online-panel" id="online-panel">
+      <div class="online-header">
+        <h2>☁️ Contribution en ligne</h2>
+        <div id="online-auth-area">
+          <button class="btn-secondary" id="btn-google-signin">Se connecter avec Google</button>
+          <button class="btn-secondary" id="btn-google-signout" style="display: none">Se déconnecter</button>
+        </div>
+      </div>
+      <p class="hint" id="online-user-info" style="display: none"></p>
+      <p class="hint online-admin-badge" id="online-admin-badge" style="display: none">
+        👑 Compte admin — tu peux approuver/rejeter les propositions ci-dessous.
+      </p>
+      <p class="hint" id="online-offline-hint">
+        Connecte-toi avec Google pour proposer une question depuis le formulaire ci-dessus (bouton "Proposer en
+        ligne"), ou pour valider les propositions de la communauté si ton compte est admin. Demande à
+        l'administrateur du projet de créer un projet Firebase — voir le README.
+      </p>
+      <div id="online-proposals-list" class="online-proposals-list"></div>
+    </div>
+
     <p class="editor-status hint" id="editor-status"></p>
 
     <div class="editor-list" id="editor-list"></div>
@@ -124,6 +144,7 @@
 
       <div class="editor-modal-actions">
         <button class="btn-secondary" id="btn-cancel">Annuler</button>
+        <button class="btn-secondary" id="btn-propose-online" style="display: none">📤 Proposer en ligne</button>
         <button class="btn-primary" id="btn-save-question">Enregistrer cette question</button>
       </div>
     </div>
@@ -134,5 +155,6 @@
   <script src="js/game-engine.js"></script>
   <script src="js/questions.js"></script>
   <script src="js/editor.js"></script>
+  <script type="module" src="js/online.js"></script>
 </body>
 </html>

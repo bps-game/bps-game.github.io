@@ -59,6 +59,91 @@ body.editor-body {
   margin: -6px 2px 0;
 }
 
+.online-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.online-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.online-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+#online-auth-area button {
+  width: auto;
+  padding: 9px 14px;
+  font-size: 0.85rem;
+}
+
+.online-admin-badge {
+  color: var(--warn);
+  font-weight: 700;
+}
+
+.online-proposals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.proposal-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.proposal-card.status-approved {
+  border-color: color-mix(in srgb, var(--good) 45%, var(--card-border));
+}
+
+.proposal-card.status-rejected {
+  border-color: color-mix(in srgb, var(--bad) 45%, var(--card-border));
+  opacity: 0.7;
+}
+
+.proposal-main {
+  min-width: 0;
+}
+
+.proposal-title {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.proposal-meta {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.proposal-actions button {
+  width: auto;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
 .editor-list {
   display: flex;
   flex-direction: column;

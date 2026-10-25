@@ -335,7 +335,11 @@
     editingId = null;
   }
 
-  function saveQuestionFromForm() {
+  // Construit l'objet question à partir du formulaire actuellement ouvert,
+  // sans rien enregistrer. Réutilisé pour l'enregistrement local ET pour la
+  // proposition en ligne (js/online.js), afin que les deux partagent
+  // exactement le même formulaire plutôt que d'en dupliquer un second.
+  function buildDraftFromForm() {
     const draft = {
       id: editingId || nextId(),
       category: $("f-category").value.trim(),
@@ -345,7 +349,11 @@
     };
     const media = collectMediaStrict();
     if (media) draft.media = media;
+    return draft;
+  }
 
+  function saveQuestionFromForm() {
+    const draft = buildDraftFromForm();
     const errors = window.Questions.validateOne(draft);
     if (errors.length > 0) {
       $("modal-error").textContent = errors.join(" · ");
@@ -470,6 +478,25 @@
     URL.revokeObjectURL(url);
     toast("Téléchargement de questions.json lancé.");
   }
+
+  // Ajoute une question déjà approuvée (venue du mode en ligne, voir
+  // js/online.js) à la liste locale, prête à être enregistrée/exportée
+  // comme n'importe quelle autre question. Renomme l'id en cas de collision
+  // plutôt que d'écraser une question existante.
+  function addApprovedQuestion(q) {
+    let toAdd = q;
+    if (questions.some((x) => x.id === toAdd.id)) {
+      toAdd = Object.assign({}, toAdd, { id: nextId() });
+    }
+    questions.push(toAdd);
+    saveDraft();
+    renderList();
+  }
+
+  // Pont avec js/online.js (module ES séparé à cause du SDK Firebase) : le
+  // mode en ligne réutilise le même formulaire que l'édition locale pour
+  // proposer une question, et dépose les questions approuvées ici.
+  window.EditorBridge = { buildDraftFromForm, addApprovedQuestion };
 
   // ---------- Initialisation ----------
   function init() {

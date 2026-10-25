@@ -1,0 +1,65 @@
+rules_version = '2';
+
+// Règles de sécurité pour l'outil de contribution/modération des questions
+// (editor.html, mode "en ligne"). Le jeu multijoueur lui-même ne touche
+// jamais à cette base : il continue de lire questions/questions.json en
+// statique. Cette base sert uniquement à proposer/valider de nouvelles
+// questions avant qu'elles soient exportées dans ce fichier.
+//
+// À coller tel quel dans Firebase Console → Firestore Database → Règles.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Être admin = avoir un document dans /admins dont l'ID est son UID
+    // Google. Cette collection n'est JAMAIS modifiable depuis l'app : le
+    // premier admin (et tout admin suivant) s'ajoute à la main depuis la
+    // console Firebase, pas depuis le site. Ça évite qu'un compte puisse
+    // s'auto-promouvoir admin par n'importe quel moyen côté client.
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{uid} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // Questions proposées par la communauté, en attente de modération.
+    match /proposals/{proposalId} {
+      // Tout compte connecté voit la file d'attente (transparence).
+      allow read: if isSignedIn();
+
+      // Créer une proposition : uniquement en son propre nom, forcément
+      // "pending" au départ (impossible de s'auto-approuver), avec un
+      // minimum de forme valide. La validation complète du schéma se fait
+      // côté client (js/questions.js) avant l'envoi.
+      allow create: if isSignedIn()
+        && request.resource.data.proposedBy == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.question is map
+        && request.resource.data.question.question is string
+        && request.resource.data.question.acceptableAnswers is list
+        && request.resource.data.question.acceptableAnswers.size() > 0;
+
+      // Un admin peut changer le statut (approuver/rejeter), mais ne peut
+      // pas réécrire le contenu de la question au passage — défense en
+      // profondeur, même si l'interface ne le propose jamais.
+      allow update: if isAdmin()
+        && request.resource.data.question == resource.data.question
+        && request.resource.data.proposedBy == resource.data.proposedBy
+        && request.resource.data.status in ['approved', 'rejected', 'pending'];
+
+      // L'auteur peut retirer sa propre proposition tant qu'elle attend une
+      // décision ; un admin peut supprimer n'importe quelle proposition.
+      allow delete: if isAdmin()
+        || (isSignedIn()
+            && resource.data.proposedBy == request.auth.uid
+            && resource.data.status == 'pending');
+    }
+  }
+}

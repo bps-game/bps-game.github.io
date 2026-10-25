@@ -50,6 +50,23 @@ Deux façons de faire :
 
 Dans les deux cas, pense ensuite à pousser le fichier modifié sur GitHub pour que le changement soit en ligne.
 
+### Mode "en ligne" : comptes et modération (optionnel)
+
+[`editor.html`](editor.html) a aussi un mode en ligne, pour laisser d'autres personnes **proposer** des questions sans qu'elles touchent directement au fichier, avec validation par un·e admin avant qu'elles soient ajoutées. C'est 100% optionnel — sans configuration, l'éditeur fonctionne exactement comme avant (local, `questions.json`).
+
+**Important sur la sécurité des comptes** : la connexion se fait uniquement via **Google** (bouton "Se connecter avec Google") — aucun mot de passe ne transite ni n'est stocké par ce projet, à aucun moment. C'est Google qui gère entièrement l'authentification ; nous n'avons techniquement aucun moyen de voir ou récupérer le mot de passe de qui que ce soit. Le rôle « admin » est juste une liste d'identifiants Google autorisés dans la base, et cette liste n'est modifiable que depuis la console Firebase (jamais depuis le site) — personne ne peut se nommer admin lui-même.
+
+Ce mode a besoin d'un projet Firebase gratuit (aucune carte bancaire requise) :
+
+1. Va sur [console.firebase.google.com](https://console.firebase.google.com/), crée un projet (gratuit, plan "Spark").
+2. **Authentication → Sign-in method** : active le fournisseur **Google**.
+3. **Firestore Database** : crée une base (mode production).
+4. Dans l'onglet **Règles** de Firestore, colle le contenu de [`firestore.rules`](firestore.rules) à la racine du projet, puis publie.
+5. **Paramètres du projet → Général → Tes applications** : ajoute une app web, copie la config fournie dans [`js/firebase-config.js`](js/firebase-config.js) (remplace les `"REMPLACE-MOI"`). Ce n'est pas un secret, tu peux le commiter.
+6. **Devenir le premier admin** : dans Firestore, crée manuellement une collection `admins`, puis un document dont l'**ID est ton UID Google** (visible dans Authentication → Users une fois que tu t'es connecté·e une première fois sur `editor.html`). Le contenu du document n'a pas d'importance, seule son existence compte.
+
+Une fois configuré : n'importe qui de connecté peut proposer une question (bouton "Proposer en ligne" dans le formulaire) ; les comptes admin voient la file d'attente avec des boutons Approuver/Rejeter, et une question approuvée est automatiquement ajoutée à la liste locale de l'admin — il ne reste qu'à Enregistrer/Exporter comme d'habitude pour la faire apparaître dans le jeu.
+
 ## Pistes d'amélioration futures (non faites pour l'instant)
 
 - Statistiques persistantes entre les parties, comptes joueurs.
