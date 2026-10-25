@@ -2,15 +2,19 @@
 // propositions en direct, actions admin. Module ES séparé (le SDK Firebase
 // l'exige) qui communique avec editor.js (script classique) via
 // window.EditorBridge et window.Questions, déjà exposés par ces fichiers.
-import { signIn, signOutUser, watchAuth, checkIsAdmin } from "./auth.js";
+import { signIn, signOutUser, watchAuth, checkIsAdmin, isSuperAdminEmail } from "./auth.js";
 import { proposeQuestion, watchProposals, reviewProposal, deleteProposal } from "./contribute.js";
+import { addAdmin, removeAdmin, watchAdmins } from "./admins.js";
 
 const $ = (id) => document.getElementById(id);
 
 let currentUser = null;
 let currentIsAdmin = false;
+let currentIsSuperAdmin = false;
 let latestProposals = [];
+let latestAdmins = [];
 let stopWatchingProposals = null;
+let stopWatchingAdmins = null;
 
 function toast(message) {
   const el = $("toast");
@@ -92,6 +96,58 @@ function renderProposals() {
   });
 }
 
+function renderAdminList() {
+  const container = $("admin-list");
+  if (!container) return;
+  container.innerHTML = "";
+
+  if (latestAdmins.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "hint";
+    empty.textContent = "Aucun admin ajouté pour l'instant (à part toi, le super-admin).";
+    container.appendChild(empty);
+    return;
+  }
+
+  latestAdmins.forEach((email) => {
+    const row = document.createElement("div");
+    row.className = "admin-row";
+
+    const label = document.createElement("span");
+    label.textContent = email;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "btn-secondary btn-danger";
+    removeBtn.textContent = "Retirer";
+    removeBtn.addEventListener("click", async () => {
+      if (!confirm("Retirer les droits admin de " + email + " ?")) return;
+      try {
+        await removeAdmin(email);
+        toast("Admin retiré.");
+      } catch (err) {
+        toast("Erreur : " + err.message);
+      }
+    });
+
+    row.appendChild(label);
+    row.appendChild(removeBtn);
+    container.appendChild(row);
+  });
+}
+
+async function addAdminFromInput() {
+  const input = $("f-admin-email");
+  const email = input.value.trim();
+  if (!email) return;
+  try {
+    await addAdmin(email, currentUser.email);
+    input.value = "";
+    toast(email + " est maintenant admin.");
+  } catch (err) {
+    toast("Erreur : " + err.message);
+  }
+}
+
 async function approveProposal(proposal) {
   try {
     await reviewProposal(proposal.id, "approved", currentUser.uid);
@@ -143,9 +199,12 @@ function applySignedOutUI() {
   $("btn-google-signout").style.display = "none";
   $("online-user-info").style.display = "none";
   $("online-admin-badge").style.display = "none";
+  $("super-admin-panel").style.display = "none";
   $("online-offline-hint").style.display = "block";
   $("btn-propose-online").style.display = "none";
   $("online-proposals-list").innerHTML = "";
+  currentIsAdmin = false;
+  currentIsSuperAdmin = false;
 }
 
 async function applySignedInUI(user) {
@@ -159,8 +218,10 @@ async function applySignedInUI(user) {
 
   $("btn-propose-online").style.display = "inline-block";
 
-  currentIsAdmin = await checkIsAdmin(user.uid);
-  $("online-admin-badge").style.display = currentIsAdmin ? "block" : "none";
+  currentIsSuperAdmin = isSuperAdminEmail(user.email);
+  currentIsAdmin = currentIsSuperAdmin || (await checkIsAdmin(user));
+  $("online-admin-badge").style.display = currentIsAdmin && !currentIsSuperAdmin ? "block" : "none";
+  $("super-admin-panel").style.display = currentIsSuperAdmin ? "block" : "none";
 
   renderProposals();
 }
@@ -178,6 +239,10 @@ function init() {
 
   $("btn-google-signout").addEventListener("click", () => signOutUser());
   $("btn-propose-online").addEventListener("click", proposeFromModal);
+  $("btn-add-admin").addEventListener("click", addAdminFromInput);
+  $("f-admin-email").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addAdminFromInput();
+  });
 
   watchAuth(async (user) => {
     currentUser = user;
@@ -185,6 +250,10 @@ function init() {
     if (stopWatchingProposals) {
       stopWatchingProposals();
       stopWatchingProposals = null;
+    }
+    if (stopWatchingAdmins) {
+      stopWatchingAdmins();
+      stopWatchingAdmins = null;
     }
 
     if (!user) {
@@ -198,6 +267,13 @@ function init() {
       latestProposals = list;
       renderProposals();
     });
+
+    if (currentIsSuperAdmin) {
+      stopWatchingAdmins = watchAdmins((list) => {
+        latestAdmins = list;
+        renderAdminList();
+      });
+    }
   });
 }
 

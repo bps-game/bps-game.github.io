@@ -63,9 +63,9 @@ Ce mode a besoin d'un projet Firebase gratuit (aucune carte bancaire requise) :
 3. **Firestore Database** : crée une base (mode production).
 4. Dans l'onglet **Règles** de Firestore, colle le contenu de [`firestore.rules`](firestore.rules) à la racine du projet, puis publie.
 5. **Paramètres du projet → Général → Tes applications** : ajoute une app web, copie la config fournie dans [`js/firebase-config.js`](js/firebase-config.js) (remplace les `"REMPLACE-MOI"`). Ce n'est pas un secret, tu peux le commiter.
-6. **Devenir le premier admin** : dans Firestore, crée manuellement une collection `admins`, puis un document dont l'**ID est ton UID Google** (visible dans Authentication → Users une fois que tu t'es connecté·e une première fois sur `editor.html`). Le contenu du document n'a pas d'importance, seule son existence compte.
+6. **Super-admin** : ouvre [`js/auth.js`](js/auth.js) et remplace la valeur de `SUPER_ADMIN_EMAIL` par ta propre adresse Gmail, puis fais pareil dans [`firestore.rules`](firestore.rules) (la fonction `isSuperAdmin()`) — republie les règles mises à jour comme à l'étape 3.6. Cette adresse est codée en dur dans les règles : elle seule obtient automatiquement tous les droits à sa première connexion, sans manipulation dans Firestore.
 
-Une fois configuré : n'importe qui de connecté peut proposer une question (bouton "Proposer en ligne" dans le formulaire) ; les comptes admin voient la file d'attente avec des boutons Approuver/Rejeter, et une question approuvée est automatiquement ajoutée à la liste locale de l'admin — il ne reste qu'à Enregistrer/Exporter comme d'habitude pour la faire apparaître dans le jeu.
+Une fois configuré : n'importe qui de connecté peut proposer une question (bouton "Proposer en ligne" dans le formulaire) ; les comptes admin voient la file d'attente avec des boutons Approuver/Rejeter, et une question approuvée est automatiquement ajoutée à la liste locale de l'admin — il ne reste qu'à Enregistrer/Exporter comme d'habitude pour la faire apparaître dans le jeu. Le compte super-admin a en plus un panneau "Ajouter/retirer un admin" (juste une adresse email à saisir) pour donner les droits admin à d'autres comptes, sans jamais toucher à la console Firebase.
 
 ## Pistes d'amélioration futures (non faites pour l'instant)
 

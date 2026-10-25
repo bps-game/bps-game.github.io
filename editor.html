@@ -49,6 +49,16 @@
       <p class="hint online-admin-badge" id="online-admin-badge" style="display: none">
         👑 Compte admin — tu peux approuver/rejeter les propositions ci-dessous.
       </p>
+
+      <div id="super-admin-panel" style="display: none">
+        <p class="hint super-admin-badge">⭐ Compte Super-Admin — tu peux ajouter/retirer des admins par email.</p>
+        <div class="admin-manage-row">
+          <input type="email" id="f-admin-email" placeholder="email@exemple.com" autocomplete="off" />
+          <button class="btn-secondary" id="btn-add-admin">+ Ajouter admin</button>
+        </div>
+        <div id="admin-list" class="admin-list"></div>
+      </div>
+
       <p class="hint" id="online-offline-hint">
         Connecte-toi avec Google pour proposer une question depuis le formulaire ci-dessus (bouton "Proposer en
         ligne"), ou pour valider les propositions de la communauté si ton compte est admin. Demande à

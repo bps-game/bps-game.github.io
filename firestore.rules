@@ -14,19 +14,35 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Être admin = avoir un document dans /admins dont l'ID est son UID
-    // Google. Cette collection n'est JAMAIS modifiable depuis l'app : le
-    // premier admin (et tout admin suivant) s'ajoute à la main depuis la
-    // console Firebase, pas depuis le site. Ça évite qu'un compte puisse
-    // s'auto-promouvoir admin par n'importe quel moyen côté client.
-    function isAdmin() {
-      return isSignedIn() &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    function myEmail() {
+      return isSignedIn() ? request.auth.token.email.lower() : "";
     }
 
-    match /admins/{uid} {
+    // Le super-admin est codé EN DUR ici, directement dans les règles.
+    // Seule une personne ayant accès à cette console Firebase peut changer
+    // cette adresse — même pas l'app elle-même. Il n'a besoin d'aucun
+    // document dans /admins pour être reconnu comme admin : c'est
+    // automatique dès sa connexion, et c'est lui seul qui peut ajouter ou
+    // retirer d'autres admins (voir plus bas).
+    function isSuperAdmin() {
+      return myEmail() == "advestankv@gmail.com";
+    }
+
+    // Être admin = être le super-admin, OU avoir un document dans /admins
+    // dont l'ID est son adresse email en minuscules (ajouté par le
+    // super-admin depuis l'app, voir js/admins.js).
+    function isAdmin() {
+      return isSuperAdmin() ||
+        (isSignedIn() && exists(/databases/$(database)/documents/admins/$(myEmail())));
+    }
+
+    // Admins ajoutés par le super-admin (en plus de lui-même, qui n'a pas
+    // besoin d'entrée ici). Lisible par tout compte connecté (transparence) ;
+    // seul le super-admin peut en ajouter/retirer, et uniquement avec un ID
+    // de document déjà en minuscules (cohérence avec myEmail()).
+    match /admins/{emailId} {
       allow read: if isSignedIn();
-      allow write: if false;
+      allow write: if isSuperAdmin() && emailId == emailId.lower();
     }
 
     // Questions proposées par la communauté, en attente de modération.

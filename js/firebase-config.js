@@ -12,10 +12,10 @@
 // une base Firestore, et colle le contenu de firestore.rules dans l'onglet
 // Règles. Le détail est dans README.md.
 export const firebaseConfig = {
-  apiKey: "REMPLACE-MOI",
-  authDomain: "REMPLACE-MOI.firebaseapp.com",
-  projectId: "REMPLACE-MOI",
-  storageBucket: "REMPLACE-MOI.appspot.com",
-  messagingSenderId: "REMPLACE-MOI",
-  appId: "REMPLACE-MOI",
+  apiKey: "AIzaSyBG1zCiSPfn05yIbwSEh6lNNLZ-oP6jpVk",
+  authDomain: "betterpopsauce.firebaseapp.com",
+  projectId: "betterpopsauce",
+  storageBucket: "betterpopsauce.firebasestorage.app",
+  messagingSenderId: "746420399989",
+  appId: "1:746420399989:web:3f8322229b524fe2b56d3c",
 };
