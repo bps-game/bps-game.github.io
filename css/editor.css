@@ -84,6 +84,13 @@ body.editor-body {
   font-size: 0.85rem;
 }
 
+.online-rename-btn {
+  width: auto;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  margin: -4px 0 4px;
+}
+
 .online-admin-badge {
   color: var(--warn);
   font-weight: 700;

@@ -214,11 +214,9 @@
   }
 
   function renderQuestion(payload, handlers) {
-    $("question-progress").textContent = "Question " + (payload.index + 1) + "/" + payload.total;
+    $("question-progress").textContent =
+      typeof payload.winScore === "number" ? "Objectif : " + payload.winScore + " pts" : "";
     $("question-category").textContent = payload.category || "";
-    if (typeof payload.winScore === "number") {
-      $("scoreboard-title").textContent = "Scores (objectif : " + payload.winScore + " pts)";
-    }
 
     const textEl = $("question-text");
     textEl.textContent = payload.text;
@@ -372,6 +370,25 @@
     });
   }
 
+  // Ajoute un message au chat de la partie (panneau sous le tableau des
+  // scores) et fait défiler vers le bas pour montrer le plus récent.
+  function addChatMessage(entry, myId) {
+    const container = $("chat-messages");
+    if (!container) return;
+    const row = document.createElement("div");
+    row.className = "chat-message" + (entry.id === myId ? " mine" : "");
+    const author = document.createElement("span");
+    author.className = "chat-message-author";
+    author.textContent = entry.pseudo + " : ";
+    const text = document.createElement("span");
+    text.className = "chat-message-text";
+    text.textContent = entry.text;
+    row.appendChild(author);
+    row.appendChild(text);
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+  }
+
   function renderReveal(payload, myId) {
     stopTimer();
     activeAnswer = null;
@@ -513,6 +530,7 @@
     initHomeTabs,
     renderLobby,
     setLobbyCode,
+    addChatMessage,
     renderQuestion,
     handleAnswerResult,
     renderScoreboard,

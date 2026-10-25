@@ -17,11 +17,11 @@ import { db } from "./firebase-app.js";
 
 const COLLECTION = "proposals";
 
-export function proposeQuestion(question, user) {
+export function proposeQuestion(question, user, displayName) {
   return addDoc(collection(db, COLLECTION), {
     question,
     proposedBy: user.uid,
-    proposedByName: user.displayName || user.email || "Anonyme",
+    proposedByName: displayName || user.displayName || user.email || "Anonyme",
     status: "pending",
     createdAt: serverTimestamp(),
   });

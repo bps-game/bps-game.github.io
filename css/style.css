@@ -496,15 +496,24 @@ button:disabled {
 }
 
 .question-image {
-  max-width: 100%;
+  width: 100%;
+  height: 280px;
+  object-fit: contain;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
   margin-bottom: 14px;
   display: block;
 }
 
 .question-video {
-  width: 100%;
   background: #000;
+}
+
+@media (max-width: 720px) {
+  .question-image {
+    height: 200px;
+  }
 }
 
 .question-quote {
@@ -614,6 +623,64 @@ button:disabled {
 
 .score-row.wrong .score-row-status {
   color: var(--bad);
+}
+
+.chat-panel {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+}
+
+.chat-messages {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
+.chat-message {
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.chat-message-author {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.chat-message.mine .chat-message-author {
+  color: var(--primary);
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 6px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.chat-send-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
 @media (max-width: 720px) {
@@ -918,6 +985,37 @@ footer.note {
   white-space: nowrap;
 }
 
+.account-rename {
+  width: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.account-pseudo-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 6px 8px 6px 16px;
+  box-shadow: var(--shadow);
+}
+
+.account-pseudo-form input {
+  width: 140px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
 @media (max-width: 640px) {
   .account-btn {
     padding: 8px 12px;
@@ -926,6 +1024,10 @@ footer.note {
 
   .account-name {
     max-width: 70px;
+  }
+
+  .account-pseudo-form input {
+    width: 90px;
   }
 
   .account-link {

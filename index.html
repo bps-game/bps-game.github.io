@@ -13,7 +13,6 @@
   <div class="app">
     <div class="brand">
       <h1><span class="glitch" data-text="BetterPopsauce">BetterPopsauce</span></h1>
-      <p>Quiz de culture générale entre amis — gratuit, sans compte, connexion directe entre joueurs.</p>
     </div>
 
     <div id="screen-home" class="screen active">
@@ -74,7 +73,7 @@
       <div class="question-layout">
         <div class="card question-card" id="question-card">
           <div class="progress-row">
-            <span id="question-progress">Question 1/40</span>
+            <span id="question-progress"></span>
             <span id="question-category"></span>
           </div>
           <div class="timer-bar"><div class="timer-bar-fill" id="timer-fill"></div></div>
@@ -109,6 +108,13 @@
         <aside class="card scoreboard-panel">
           <h3 class="scoreboard-title" id="scoreboard-title">Scores</h3>
           <div class="scoreboard-list" id="live-scoreboard"></div>
+          <div class="chat-panel">
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input-row">
+              <input type="text" id="chat-input" maxlength="140" placeholder="Message…" autocomplete="off" />
+              <button class="chat-send-btn" id="btn-chat-send" aria-label="Envoyer">➤</button>
+            </div>
+          </div>
         </aside>
       </div>
     </div>
@@ -141,17 +147,19 @@
       </div>
     </div>
 
-    <footer class="note">
-      Connexion directe entre joueurs (WebRTC) — la personne qui a créé la partie doit garder cet onglet ouvert.
-    </footer>
   </div>
 
   <button class="mute-btn" id="btn-mute" title="Couper/activer le son" aria-label="Couper ou activer le son">🔊</button>
 
   <div class="account-widget" id="account-widget">
     <button class="account-btn" id="btn-account-signin">Se connecter avec Google</button>
+    <div class="account-pseudo-form" id="account-pseudo-form" style="display: none">
+      <input type="text" id="account-pseudo-input" maxlength="24" placeholder="Choisis ton pseudo" autocomplete="off" />
+      <button class="account-btn" id="btn-account-pseudo-save">OK</button>
+    </div>
     <div class="account-signed-in" id="account-signed-in" style="display: none">
       <span class="account-name" id="account-name"></span>
+      <button class="account-rename" id="btn-account-rename" title="Changer de pseudo" aria-label="Changer de pseudo">✏️</button>
       <a class="account-link" href="editor.html">📝 Proposer une question</a>
       <button class="account-signout" id="btn-account-signout">Déconnexion</button>
     </div>

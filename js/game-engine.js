@@ -12,6 +12,7 @@
     LIVE_STATUS: "LIVE_STATUS",
     REVEAL: "REVEAL",
     GAME_END: "GAME_END",
+    CHAT: "CHAT",
   };
 
   const REVEAL_DURATION_MS = 6000;
@@ -37,21 +38,17 @@
   // ---------- Correction des réponses libres ----------
   //
   // Toutes les questions sont à réponse libre (texte tapé au clavier). Une
-  // réponse est acceptée si elle correspond à l'une des `acceptableAnswers`
-  // de la question, selon plusieurs stratégies cumulées :
-  //  1. Égalité exacte après normalisation (accents/casse/ponctuation).
-  //  2. Tolérance aux fautes de frappe (distance de Levenshtein, proportionnelle
-  //     à la longueur du texte).
-  //  3. Titre partiel : un sous-titre ou une forme raccourcie est accepté dès
-  //     lors qu'il correspond à une suite de mots CONTIGUË de la réponse
-  //     complète (ex : "Tears of the Kingdom" dans "The Legend of Zelda:
-  //     Tears of the Kingdom"), dans un sens comme dans l'autre.
-  //  4. Acronymes/sigles : les initiales de n'importe quelle suite d'au moins
-  //     3 mots consécutifs de la réponse sont acceptées (ex : "TOTK").
+  // réponse est acceptée si elle correspond EXACTEMENT (après normalisation
+  // accents/casse/ponctuation) à l'une des `acceptableAnswers`, à un sous-titre
+  // contigu de l'une d'elles (ex : "Tears of the Kingdom" dans "The Legend of
+  // Zelda: Tears of the Kingdom"), ou à son acronyme (ex : "TOTK").
   //
-  // Résultat concret : il suffit en général de renseigner le titre complet
-  // dans `acceptableAnswers` pour que les formes raccourcies et les sigles
-  // les plus courants soient reconnus automatiquement.
+  // Pas de tolérance aux fautes de frappe (distance de Levenshtein) : sur des
+  // réponses courtes (noms de pays, titres courts...), ça acceptait à tort des
+  // réponses clairement différentes d'une seule lettre (ex : "Iran" pour
+  // "Irak"). Mieux vaut renseigner plusieurs `acceptableAnswers` explicites
+  // (fautes d'accent déjà ignorées, variantes orthographiques courantes) que
+  // d'ouvrir la porte à ce genre de faux positifs.
 
   function normalize(str) {
     return (str || "")
@@ -68,61 +65,26 @@
     return normalized ? normalized.split(" ").filter(Boolean) : [];
   }
 
-  function levenshtein(a, b) {
-    const m = a.length;
-    const n = b.length;
-    if (m === 0) return n;
-    if (n === 0) return m;
-    const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-    for (let i = 0; i <= m; i++) dp[i][0] = i;
-    for (let j = 0; j <= n; j++) dp[0][j] = j;
-    for (let i = 1; i <= m; i++) {
-      for (let j = 1; j <= n; j++) {
-        dp[i][j] =
-          a[i - 1] === b[j - 1]
-            ? dp[i - 1][j - 1]
-            : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-      }
-    }
-    return dp[m][n];
-  }
-
-  function fuzzyTolerance(len) {
-    if (len <= 3) return 0;
-    if (len <= 7) return 1;
-    if (len <= 15) return 2;
-    return 3;
-  }
-
-  // Suite de mots contiguë, avec tolérance aux fautes de frappe : on cherche,
-  // parmi toutes les suites de mots contiguës de la plus longue réponse (de
-  // longueur proche de la plus courte), celle qui est la plus proche
-  // (distance de Levenshtein) de la réponse la plus courte. Couvre à la fois
-  // "titre partiel" (distance 0) et "faute de frappe dans un titre partiel".
-  // L'écart de longueur est plafonné pour éviter qu'une réponse interminable
-  // ne valide tout par simple inclusion.
-  function bestWordRunDistance(shorterWords, longerWords) {
+  // Suite de mots contiguë EXACTE : accepte un sous-titre ou une forme
+  // raccourcie dès lors qu'il correspond mot pour mot à une suite de mots
+  // consécutifs de l'autre réponse (ex : "Tears of the Kingdom" dans "The
+  // Legend of Zelda: Tears of the Kingdom"). Pas de tolérance aux fautes ici.
+  function containsWordRun(shorterWords, longerWords) {
     const shorterStr = shorterWords.join(" ");
-    const minLen = Math.max(1, shorterWords.length - 1);
-    const maxLen = Math.min(longerWords.length, shorterWords.length + 2);
-    let best = Infinity;
-    for (let len = minLen; len <= maxLen; len++) {
-      for (let start = 0; start + len <= longerWords.length; start++) {
-        const run = longerWords.slice(start, start + len).join(" ");
-        const d = levenshtein(shorterStr, run);
-        if (d < best) best = d;
-      }
+    for (let start = 0; start + shorterWords.length <= longerWords.length; start++) {
+      if (longerWords.slice(start, start + shorterWords.length).join(" ") === shorterStr) return true;
     }
-    return best;
+    return false;
   }
 
   function matchesContiguousSubset(subWords, accWords) {
     if (subWords.length < 2 || accWords.length < 2) return false;
     const shorter = subWords.length <= accWords.length ? subWords : accWords;
     const longer = subWords.length <= accWords.length ? accWords : subWords;
+    // Écart plafonné : évite qu'une réponse interminable (abus) ne valide tout
+    // en contenant par hasard la suite de mots cherchée.
     if (longer.length - shorter.length > 5) return false;
-    const tolerance = fuzzyTolerance(shorter.join(" ").length);
-    return bestWordRunDistance(shorter, longer) <= tolerance;
+    return containsWordRun(shorter, longer);
   }
 
   function acronymOf(wordList) {
@@ -145,9 +107,6 @@
     const acceptedNorm = normalize(accepted);
     if (!acceptedNorm) return false;
     if (submittedNorm === acceptedNorm) return true;
-
-    const tolerance = fuzzyTolerance(Math.max(submittedNorm.length, acceptedNorm.length));
-    if (levenshtein(submittedNorm, acceptedNorm) <= tolerance) return true;
 
     const acceptedWords = wordsOf(acceptedNorm);
     if (matchesContiguousSubset(submittedWords, acceptedWords)) return true;
@@ -447,7 +406,7 @@
       getCurrentIndex: () => currentIndex,
       getWinScore: () => winScore,
       // exposés pour les tests manuels / debug
-      _internal: { normalize, levenshtein, isAnswerCorrect, computeScore },
+      _internal: { normalize, isAnswerCorrect, computeScore },
     };
   }
 

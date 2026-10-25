@@ -45,6 +45,17 @@ service cloud.firestore {
       allow write: if isSuperAdmin() && emailId == emailId.lower();
     }
 
+    // Pseudo public choisi par chaque compte (affiché à la place du nom/email
+    // Google) : un document par utilisateur, lisible et modifiable
+    // uniquement par son propriétaire.
+    match /profiles/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if isSignedIn() && request.auth.uid == uid
+        && request.resource.data.pseudo is string
+        && request.resource.data.pseudo.size() > 0
+        && request.resource.data.pseudo.size() <= 24;
+    }
+
     // Questions proposées par la communauté, en attente de modération.
     match /proposals/{proposalId} {
       // Tout compte connecté voit la file d'attente (transparence).

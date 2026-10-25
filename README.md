@@ -2,7 +2,7 @@
 
 Quiz de culture générale multijoueur en temps réel, façon Popsauce — **100% gratuit, sans compte, sans serveur à payer**.
 
-Tout le monde répond en même temps aux mêmes questions, à l'écrit (pas de QCM), avec une correction tolérante aux fautes de frappe, aux titres partiels et aux acronymes. Comme dans Popsauce, une question peut être accompagnée d'un élément visuel à deviner : image, GIF, courte vidéo ou citation. Chaque bonne réponse rapporte entre 1 et 20 points : le premier à trouver a toujours le maximum, puis les points des suivants diminuent avec le temps écoulé depuis cette première bonne réponse, sans jamais descendre sous 1 point. Un tableau des scores en direct (à droite pendant la question) montre qui a trouvé et la dernière tentative fausse de chacun, avec un badge 🔥 pour les séries de bonnes réponses. La partie n'est pas limitée à un nombre fixe de questions : l'hôte fixe un score à atteindre dans le lobby, et la partie s'arrête dès qu'un joueur l'atteint (ou s'il n'y a plus de questions avant que quelqu'un y arrive).
+Tout le monde répond en même temps aux mêmes questions, à l'écrit (pas de QCM), avec une correction exacte (accents/casse/ponctuation ignorés) qui accepte aussi les titres partiels et les acronymes — pas de tolérance aux fautes de frappe, pour éviter les faux positifs entre réponses proches mais différentes. Comme dans Popsauce, une question peut être accompagnée d'un élément visuel à deviner : image, GIF, courte vidéo ou citation. Chaque bonne réponse rapporte entre 1 et 20 points : le premier à trouver a toujours le maximum, puis les points des suivants diminuent avec le temps écoulé depuis cette première bonne réponse, sans jamais descendre sous 1 point. Un tableau des scores en direct (à droite pendant la question) montre qui a trouvé et la dernière tentative fausse de chacun, avec un badge 🔥 pour les séries de bonnes réponses. La partie n'est pas limitée à un nombre fixe de questions : l'hôte fixe un score à atteindre dans le lobby, et la partie s'arrête dès qu'un joueur l'atteint (ou s'il n'y a plus de questions avant que quelqu'un y arrive).
 
 Le tout avec une bonne dose de "juice" : sons synthétisés (zéro fichier audio, bouton 🔊/🔇 pour couper), chiffres qui défilent au lieu de sauter, secousse sur une mauvaise réponse, et confettis au podium final.
 
@@ -45,7 +45,7 @@ Puis ouvre l'URL affichée dans deux onglets différents pour tester le multijou
 
 Deux façons de faire :
 
-- **[`editor.html`](editor.html)** : un éditeur visuel à ouvrir dans le navigateur (en local ou via l'URL déployée) pour créer/modifier/supprimer des questions sans toucher au JSON — formulaire avec aperçu en direct (rendu exactement comme dans le jeu) et un testeur de réponse pour vérifier qu'une faute de frappe ou une forme raccourcie serait bien acceptée. Dans Chrome/Edge, il peut lire et réenregistrer directement `questions/questions.json` sur ton disque ; sinon, importe/exporte le fichier JSON manuellement. Rien n'est envoyé nulle part, tout reste dans ton navigateur.
+- **[`editor.html`](editor.html)** : un éditeur visuel à ouvrir dans le navigateur (en local ou via l'URL déployée) pour créer/modifier/supprimer des questions sans toucher au JSON — formulaire avec aperçu en direct (rendu exactement comme dans le jeu) et un testeur de réponse pour vérifier qu'une forme raccourcie ou un acronyme serait bien accepté. Dans Chrome/Edge, il peut lire et réenregistrer directement `questions/questions.json` sur ton disque ; sinon, importe/exporte le fichier JSON manuellement. Rien n'est envoyé nulle part, tout reste dans ton navigateur.
 - **À la main** : tout le schéma est documenté dans [`questions/README.md`](questions/README.md) — il suffit d'éditer `questions/questions.json`.
 
 Dans les deux cas, pense ensuite à pousser le fichier modifié sur GitHub pour que le changement soit en ligne.
@@ -66,6 +66,8 @@ Ce mode a besoin d'un projet Firebase gratuit (aucune carte bancaire requise) :
 6. **Super-admin** : ouvre [`js/auth.js`](js/auth.js) et remplace la valeur de `SUPER_ADMIN_EMAIL` par ta propre adresse Gmail, puis fais pareil dans [`firestore.rules`](firestore.rules) (la fonction `isSuperAdmin()`) — republie les règles mises à jour comme à l'étape 3.6. Cette adresse est codée en dur dans les règles : elle seule obtient automatiquement tous les droits à sa première connexion, sans manipulation dans Firestore.
 
 Une fois configuré : n'importe qui de connecté peut proposer une question (bouton "Proposer en ligne" dans le formulaire) ; les comptes admin voient la file d'attente avec des boutons Approuver/Rejeter, et une question approuvée est automatiquement ajoutée à la liste locale de l'admin — il ne reste qu'à Enregistrer/Exporter comme d'habitude pour la faire apparaître dans le jeu. Le compte super-admin a en plus un panneau "Ajouter/retirer un admin" (juste une adresse email à saisir) pour donner les droits admin à d'autres comptes, sans jamais toucher à la console Firebase.
+
+À la première connexion (sur le jeu comme dans l'éditeur), chacun choisit un **pseudo public** — c'est lui qui est affiché partout (propositions, liste des comptes), jamais le nom ou l'email du compte Google. Il reste modifiable à tout moment (icône ✏️ à côté du nom affiché).
 
 ## Pistes d'amélioration futures (non faites pour l'instant)
 

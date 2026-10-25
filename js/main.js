@@ -16,6 +16,7 @@
     wireLobbyScreen();
     wireEndScreen();
     wireMuteButton();
+    wireChat();
     wireNetwork();
     wireGameEngine();
   }
@@ -110,6 +111,51 @@
     return err.type || err.message || "erreur inconnue";
   }
 
+  // Chat de partie : l'hôte fait toujours autorité sur la diffusion (les
+  // joueurs ne se connaissent qu'à travers lui, topologie en étoile), comme
+  // pour le reste du jeu — il n'a pas besoin de passer par le moteur de jeu,
+  // ça n'affecte ni score ni déroulé de la partie.
+  function wireChat() {
+    const input = document.getElementById("chat-input");
+    const btn = document.getElementById("btn-chat-send");
+    if (!input || !btn) return;
+
+    const submit = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      sendChatMessage(text);
+      input.value = "";
+    };
+    btn.addEventListener("click", submit);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") submit();
+    });
+  }
+
+  function sendChatMessage(text) {
+    if (role === "host") {
+      const entry = { id: myId, pseudo: myPseudo, text, ts: Date.now() };
+      Network.broadcast({ type: GameEngine.MSG.CHAT, entry });
+      UI.addChatMessage(entry, myId);
+    } else {
+      Network.sendToHost({ type: GameEngine.MSG.CHAT, text });
+    }
+  }
+
+  // L'hôte reçoit le texte brut d'un joueur, l'associe à son pseudo connu et
+  // le redistribue à tout le monde (y compris lui-même, localement) ; les
+  // joueurs ne font qu'afficher l'entrée déjà complète reçue de l'hôte.
+  function handleChatMessage(fromPeerId, data) {
+    if (role === "host") {
+      const player = GameEngine.getPlayers().find((p) => p.id === fromPeerId);
+      const entry = { id: fromPeerId, pseudo: player ? player.pseudo : "Joueur", text: data.text, ts: Date.now() };
+      Network.broadcast({ type: GameEngine.MSG.CHAT, entry });
+      UI.addChatMessage(entry, myId);
+    } else {
+      UI.addChatMessage(data.entry, myId);
+    }
+  }
+
   function wireLobbyScreen() {
     document.getElementById("win-score-input").addEventListener("change", (e) => {
       GameEngine.hostSetWinScore(e.target.value);
@@ -139,6 +185,10 @@
 
   function wireNetwork() {
     Network.onMessage((fromPeerId, data) => {
+      if (data.type === GameEngine.MSG.CHAT) {
+        handleChatMessage(fromPeerId, data);
+        return;
+      }
       if (role === "host") {
         if (data.type === GameEngine.MSG.JOIN) {
           GameEngine.hostAddPlayer(fromPeerId, data.pseudo);

@@ -5,10 +5,12 @@
 import { signIn, signOutUser, watchAuth, checkIsAdmin, isSuperAdminEmail } from "./auth.js";
 import { proposeQuestion, watchProposals, reviewProposal, deleteProposal } from "./contribute.js";
 import { addAdmin, removeAdmin, watchAdmins } from "./admins.js";
+import { fetchPseudo, savePseudo } from "./profile.js";
 
 const $ = (id) => document.getElementById(id);
 
 let currentUser = null;
+let currentPseudo = null;
 let currentIsAdmin = false;
 let currentIsSuperAdmin = false;
 let latestProposals = [];
@@ -35,7 +37,7 @@ function renderProposals() {
   const container = $("online-proposals-list");
   container.innerHTML = "";
 
-  if (!currentUser) return;
+  if (!currentUser || !currentPseudo) return;
 
   if (latestProposals.length === 0) {
     const empty = document.createElement("p");
@@ -186,7 +188,7 @@ async function proposeFromModal() {
     return;
   }
   try {
-    await proposeQuestion(draft, currentUser);
+    await proposeQuestion(draft, currentUser, currentPseudo);
     toast("Question proposée ! Elle apparaîtra dans la file d'attente en attendant une validation admin.");
     $("btn-cancel").click();
   } catch (err) {
@@ -197,7 +199,9 @@ async function proposeFromModal() {
 function applySignedOutUI() {
   $("btn-google-signin").style.display = "inline-block";
   $("btn-google-signout").style.display = "none";
+  $("online-pseudo-form").style.display = "none";
   $("online-user-info").style.display = "none";
+  $("btn-online-rename").style.display = "none";
   $("online-admin-badge").style.display = "none";
   $("super-admin-panel").style.display = "none";
   $("online-offline-hint").style.display = "block";
@@ -205,16 +209,36 @@ function applySignedOutUI() {
   $("online-proposals-list").innerHTML = "";
   currentIsAdmin = false;
   currentIsSuperAdmin = false;
+  currentPseudo = null;
+}
+
+// Tant qu'aucun pseudo n'est choisi, on ne montre que le formulaire de
+// pseudo : pas de propositions/admin tant que l'identité publique du compte
+// n'est pas définie.
+function showPseudoForm(prefill) {
+  $("btn-google-signin").style.display = "none";
+  $("btn-google-signout").style.display = "inline-block";
+  $("online-offline-hint").style.display = "none";
+  $("online-pseudo-form").style.display = "block";
+  $("online-user-info").style.display = "none";
+  $("btn-online-rename").style.display = "none";
+  $("online-admin-badge").style.display = "none";
+  $("super-admin-panel").style.display = "none";
+  $("btn-propose-online").style.display = "none";
+  $("online-proposals-list").innerHTML = "";
+  $("online-pseudo-input").value = prefill || "";
 }
 
 async function applySignedInUI(user) {
   $("btn-google-signin").style.display = "none";
   $("btn-google-signout").style.display = "inline-block";
   $("online-offline-hint").style.display = "none";
+  $("online-pseudo-form").style.display = "none";
 
   const info = $("online-user-info");
-  info.textContent = "Connecté·e en tant que " + (user.displayName || user.email);
+  info.textContent = "Connecté·e en tant que " + currentPseudo;
   info.style.display = "block";
+  $("btn-online-rename").style.display = "inline-block";
 
   $("btn-propose-online").style.display = "inline-block";
 
@@ -224,6 +248,25 @@ async function applySignedInUI(user) {
   $("super-admin-panel").style.display = currentIsSuperAdmin ? "block" : "none";
 
   renderProposals();
+}
+
+async function refreshIdentity(user) {
+  currentPseudo = await fetchPseudo(user.uid);
+  if (currentPseudo) await applySignedInUI(user);
+  else showPseudoForm("");
+}
+
+async function savePseudoFromInput() {
+  if (!currentUser) return;
+  const value = $("online-pseudo-input").value.trim();
+  if (!value) return;
+  try {
+    await savePseudo(currentUser.uid, value);
+    currentPseudo = value;
+    await applySignedInUI(currentUser);
+  } catch (err) {
+    toast("Erreur : " + err.message);
+  }
 }
 
 function init() {
@@ -239,6 +282,11 @@ function init() {
 
   $("btn-google-signout").addEventListener("click", () => signOutUser());
   $("btn-propose-online").addEventListener("click", proposeFromModal);
+  $("btn-online-rename").addEventListener("click", () => showPseudoForm(currentPseudo || ""));
+  $("btn-online-pseudo-save").addEventListener("click", savePseudoFromInput);
+  $("online-pseudo-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") savePseudoFromInput();
+  });
   $("btn-add-admin").addEventListener("click", addAdminFromInput);
   $("f-admin-email").addEventListener("keydown", (e) => {
     if (e.key === "Enter") addAdminFromInput();
@@ -261,7 +309,7 @@ function init() {
       return;
     }
 
-    await applySignedInUI(user);
+    await refreshIdentity(user);
 
     stopWatchingProposals = watchProposals((list) => {
       latestProposals = list;

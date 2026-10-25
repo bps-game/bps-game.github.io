@@ -45,7 +45,17 @@
           <button class="btn-secondary" id="btn-google-signout" style="display: none">Se déconnecter</button>
         </div>
       </div>
+      <div class="online-pseudo-form" id="online-pseudo-form" style="display: none">
+        <label for="online-pseudo-input" class="hint">Choisis ton pseudo public (affiché sur tes propositions)</label>
+        <div class="admin-manage-row">
+          <input type="text" id="online-pseudo-input" maxlength="24" placeholder="Ton pseudo" autocomplete="off" />
+          <button class="btn-secondary" id="btn-online-pseudo-save">OK</button>
+        </div>
+      </div>
       <p class="hint" id="online-user-info" style="display: none"></p>
+      <button class="btn-secondary online-rename-btn" id="btn-online-rename" style="display: none">
+        ✏️ Changer de pseudo
+      </button>
       <p class="hint online-admin-badge" id="online-admin-badge" style="display: none">
         👑 Compte admin — tu peux approuver/rejeter les propositions ci-dessous.
       </p>
