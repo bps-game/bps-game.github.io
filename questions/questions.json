@@ -1,0 +1,50 @@
+[
+  { "id": "q1", "category": "Histoire", "type": "qcm", "question": "En quelle année a eu lieu la prise de la Bastille ?", "image": null, "choices": ["1789", "1799", "1804", "1715"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q2", "category": "Histoire", "type": "libre", "question": "Quel empereur français a été exilé sur l'île de Sainte-Hélène ?", "image": null, "acceptableAnswers": ["napoleon", "napoleon bonaparte"], "timeLimit": 20, "points": 1000 },
+  { "id": "q3", "category": "Histoire", "type": "qcm", "question": "Quel mur emblématique est tombé en 1989 ?", "image": null, "choices": ["Le mur de Berlin", "Le mur d'Hadrien", "La Grande Muraille de Chine", "Le mur de Théodose"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q4", "category": "Histoire", "type": "libre", "question": "Quel roi de France est surnommé le « Roi Soleil » ?", "image": null, "acceptableAnswers": ["louis xiv", "louis 14"], "timeLimit": 20, "points": 1000 },
+  { "id": "q5", "category": "Histoire", "type": "qcm", "question": "Quelle civilisation a construit les pyramides de Gizeh ?", "image": null, "choices": ["Les Égyptiens", "Les Mayas", "Les Romains", "Les Incas"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q6", "category": "Géographie", "type": "qcm", "question": "Quelle est la capitale de l'Australie ?", "image": null, "choices": ["Canberra", "Sydney", "Melbourne", "Perth"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q7", "category": "Géographie", "type": "libre", "question": "Quel est le plus long fleuve du monde ?", "image": null, "acceptableAnswers": ["nil", "le nil"], "timeLimit": 20, "points": 1000 },
+  { "id": "q8", "category": "Géographie", "type": "qcm", "question": "Quel pays a la forme d'une botte sur la carte ?", "image": null, "choices": ["L'Italie", "L'Espagne", "La Grèce", "Le Portugal"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q9", "category": "Géographie", "type": "libre", "question": "Quel est le plus haut sommet du monde ?", "image": null, "acceptableAnswers": ["everest", "mont everest", "l'everest"], "timeLimit": 20, "points": 1000 },
+  { "id": "q10", "category": "Géographie", "type": "qcm", "question": "Combien de continents sont généralement recensés ?", "image": null, "choices": ["7", "5", "6", "8"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q11", "category": "Cinéma", "type": "qcm", "question": "Qui a réalisé le film « Pulp Fiction » ?", "image": null, "choices": ["Quentin Tarantino", "Martin Scorsese", "David Fincher", "Guy Ritchie"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q12", "category": "Cinéma", "type": "libre", "question": "Dans Star Wars, quel est le nom du droïde qui ressemble à une petite poubelle sur roues ?", "image": null, "acceptableAnswers": ["r2d2", "r2-d2"], "timeLimit": 20, "points": 1000 },
+  { "id": "q13", "category": "Cinéma", "type": "qcm", "question": "Dans quel film culte voit-on Leonardo DiCaprio sur la proue d'un bateau ?", "image": null, "choices": ["Titanic", "Inception", "Gatsby le Magnifique", "Shutter Island"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q14", "category": "Cinéma", "type": "libre", "question": "Quel studio d'animation a créé « Toy Story » ?", "image": null, "acceptableAnswers": ["pixar"], "timeLimit": 20, "points": 1000 },
+  { "id": "q15", "category": "Cinéma", "type": "qcm", "question": "Quel super-héros est surnommé « l'homme chauve-souris » ?", "image": null, "choices": ["Batman", "Superman", "Flash", "Daredevil"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q16", "category": "Musique", "type": "qcm", "question": "Quel groupe britannique a chanté « Bohemian Rhapsody » ?", "image": null, "choices": ["Queen", "The Beatles", "Pink Floyd", "Led Zeppelin"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q17", "category": "Musique", "type": "libre", "question": "Quel compositeur allemand, devenu sourd, a composé la 9e Symphonie ?", "image": null, "acceptableAnswers": ["beethoven"], "timeLimit": 20, "points": 1000 },
+  { "id": "q18", "category": "Musique", "type": "qcm", "question": "Quel instrument de musique possède 88 touches ?", "image": null, "choices": ["Le piano", "La guitare", "Le violon", "La harpe"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q19", "category": "Musique", "type": "libre", "question": "Quelle chanteuse américaine est surnommée la « Reine de la Pop » ?", "image": null, "acceptableAnswers": ["madonna"], "timeLimit": 20, "points": 1000 },
+  { "id": "q20", "category": "Musique", "type": "qcm", "question": "Dans quel pays est né le reggae ?", "image": null, "choices": ["La Jamaïque", "Le Brésil", "Cuba", "Le Nigeria"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q21", "category": "Sciences", "type": "qcm", "question": "Quelle est la planète la plus proche du Soleil ?", "image": null, "choices": ["Mercure", "Vénus", "Mars", "La Terre"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q22", "category": "Sciences", "type": "libre", "question": "Quel est le symbole chimique de l'or ?", "image": null, "acceptableAnswers": ["au"], "timeLimit": 20, "points": 1000 },
+  { "id": "q23", "category": "Sciences", "type": "qcm", "question": "Combien d'os compte environ le corps humain adulte ?", "image": null, "choices": ["206", "150", "300", "250"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q24", "category": "Sciences", "type": "libre", "question": "Quel scientifique a formulé la théorie de la relativité ?", "image": null, "acceptableAnswers": ["einstein", "albert einstein"], "timeLimit": 20, "points": 1000 },
+  { "id": "q25", "category": "Sciences", "type": "qcm", "question": "Quel gaz les plantes absorbent-elles principalement pour la photosynthèse ?", "image": null, "choices": ["Le dioxyde de carbone", "L'oxygène", "L'azote", "L'hydrogène"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q26", "category": "Sport", "type": "qcm", "question": "Tous les combien d'années ont lieu les Jeux Olympiques d'été ?", "image": null, "choices": ["4 ans", "2 ans", "5 ans", "3 ans"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q27", "category": "Sport", "type": "libre", "question": "Quel pays a remporté la Coupe du Monde de football en 2018 ?", "image": null, "acceptableAnswers": ["france"], "timeLimit": 20, "points": 1000 },
+  { "id": "q28", "category": "Sport", "type": "qcm", "question": "Combien de joueurs une équipe de football a-t-elle sur le terrain ?", "image": null, "choices": ["11", "10", "12", "9"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q29", "category": "Sport", "type": "libre", "question": "Quel sport se joue avec un ballon ovale et des mêlées ?", "image": null, "acceptableAnswers": ["rugby", "le rugby"], "timeLimit": 20, "points": 1000 },
+  { "id": "q30", "category": "Sport", "type": "qcm", "question": "Dans quel pays se déroule chaque année le tournoi de tennis de Roland-Garros ?", "image": null, "choices": ["La France", "L'Angleterre", "L'Australie", "Les USA"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q31", "category": "Littérature", "type": "qcm", "question": "Qui a écrit « Les Misérables » ?", "image": null, "choices": ["Victor Hugo", "Émile Zola", "Molière", "Albert Camus"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q32", "category": "Littérature", "type": "libre", "question": "Quel détective anglais créé par Arthur Conan Doyle vit au 221B Baker Street ?", "image": null, "acceptableAnswers": ["sherlock holmes", "sherlock"], "timeLimit": 20, "points": 1000 },
+  { "id": "q33", "category": "Littérature", "type": "qcm", "question": "Quelle auteure a écrit la saga « Harry Potter » ?", "image": null, "choices": ["J.K. Rowling", "Stephen King", "J.R.R. Tolkien", "George Orwell"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q34", "category": "Jeux vidéo", "type": "qcm", "question": "Quel plombier moustachu est le héros de nombreux jeux Nintendo ?", "image": null, "choices": ["Mario", "Luigi", "Wario", "Yoshi"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q35", "category": "Jeux vidéo", "type": "libre", "question": "Quel hérisson bleu et rapide est la mascotte de Sega ?", "image": null, "acceptableAnswers": ["sonic"], "timeLimit": 20, "points": 1000 },
+  { "id": "q36", "category": "Jeux vidéo", "type": "qcm", "question": "Dans quel jeu construit-on librement avec des blocs dans un monde généré aléatoirement ?", "image": null, "choices": ["Minecraft", "Fortnite", "Roblox", "Terraria"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+
+  { "id": "q37", "category": "Divers", "type": "qcm", "question": "Quelle est la monnaie utilisée en France depuis 2002 ?", "image": null, "choices": ["L'euro", "Le franc", "La livre", "Le dollar"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q38", "category": "Divers", "type": "libre", "question": "Quel est le plus petit État du monde (en superficie) ?", "image": null, "acceptableAnswers": ["vatican", "le vatican", "cite du vatican"], "timeLimit": 20, "points": 1000 },
+  { "id": "q39", "category": "Divers", "type": "qcm", "question": "Combien de côtés possède un hexagone ?", "image": null, "choices": ["6", "5", "7", "8"], "correctIndex": 0, "timeLimit": 12, "points": 1000 },
+  { "id": "q40", "category": "Divers", "type": "libre", "question": "Quel fruit serait tombé sur la tête d'Isaac Newton selon la légende ?", "image": null, "acceptableAnswers": ["pomme", "une pomme"], "timeLimit": 20, "points": 1000 }
+]
