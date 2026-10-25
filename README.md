@@ -43,12 +43,15 @@ Puis ouvre l'URL affichée dans deux onglets différents pour tester le multijou
 
 ## Ajouter tes propres questions
 
-Tout est documenté dans [`questions/README.md`](questions/README.md) — il suffit d'éditer `questions/questions.json`.
+Deux façons de faire :
+
+- **[`editor.html`](editor.html)** : un éditeur visuel à ouvrir dans le navigateur (en local ou via l'URL déployée) pour créer/modifier/supprimer des questions sans toucher au JSON — formulaire avec aperçu en direct (rendu exactement comme dans le jeu) et un testeur de réponse pour vérifier qu'une faute de frappe ou une forme raccourcie serait bien acceptée. Dans Chrome/Edge, il peut lire et réenregistrer directement `questions/questions.json` sur ton disque ; sinon, importe/exporte le fichier JSON manuellement. Rien n'est envoyé nulle part, tout reste dans ton navigateur.
+- **À la main** : tout le schéma est documenté dans [`questions/README.md`](questions/README.md) — il suffit d'éditer `questions/questions.json`.
+
+Dans les deux cas, pense ensuite à pousser le fichier modifié sur GitHub pour que le changement soit en ligne.
 
 ## Pistes d'amélioration futures (non faites pour l'instant)
 
-- Questions avec extraits vidéo/audio.
 - Statistiques persistantes entre les parties, comptes joueurs.
-- Interface d'administration pour éditer les questions sans toucher au JSON.
-- Chat, sons/musique d'ambiance.
+- Chat, musique d'ambiance.
 - Serveur TURN dédié pour fiabiliser les connexions sur réseaux très restrictifs.

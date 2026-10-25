@@ -2,6 +2,8 @@
 
 Toutes les questions du jeu vivent dans [`questions.json`](questions.json), sous forme d'un tableau d'objets. Il suffit d'éditer ce fichier (avec n'importe quel éditeur de texte) puis de pousser le changement sur GitHub : pas de build, pas de redémarrage de serveur.
 
+**Pas envie de toucher au JSON ?** Ouvre [`../editor.html`](../editor.html) : un éditeur visuel (formulaire, aperçu en direct, testeur de réponse) qui lit/écrit ce même fichier. Ce document reste la référence du schéma si tu préfères éditer à la main, ou pour comprendre ce que fait l'éditeur en coulisses.
+
 Toutes les questions sont **à réponse libre** (tapée au clavier) — il n'y a pas de QCM.
 
 ## Schéma d'une question

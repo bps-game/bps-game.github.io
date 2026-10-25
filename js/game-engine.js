@@ -382,9 +382,15 @@
       if (callbacks.reveal) callbacks.reveal(payload);
 
       // Le seuil de victoire prime sur le nombre de questions : dès qu'un
-      // joueur l'atteint (ou le dépasse), la partie s'arrête après cette
-      // correction, même s'il reste des questions.
-      if (leaderboard.length > 0 && leaderboard[0].score >= winScore) {
+      // joueur l'atteint (ou le dépasse) SEUL en tête, la partie s'arrête
+      // après cette correction, même s'il reste des questions. En cas
+      // d'égalité en tête (plusieurs joueurs à égalité sur le score le plus
+      // haut), la partie continue pour les départager — tout le monde
+      // continue de jouer, pas seulement les joueurs à égalité.
+      const topScore = leaderboard.length > 0 ? leaderboard[0].score : 0;
+      const tiedAtTop = leaderboard.filter((p) => p.score === topScore).length;
+      const hasSoleWinner = topScore >= winScore && tiedAtTop === 1;
+      if (hasSoleWinner) {
         revealTimer = setTimeout(() => hostEndGame("threshold"), REVEAL_DURATION_MS);
       } else {
         revealTimer = setTimeout(() => hostNextQuestion(), REVEAL_DURATION_MS);

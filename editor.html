@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050507" />
+  <meta name="color-scheme" content="dark" />
+  <title>Éditeur de questions — BetterPopsauce</title>
+  <meta name="description" content="Outil local pour créer, modifier et supprimer les questions sans toucher au JSON à la main." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/editor.css" />
+</head>
+<body class="editor-body">
+  <div class="editor-app">
+    <header class="editor-header">
+      <h1><span class="glitch" data-text="Éditeur de questions">Éditeur de questions</span></h1>
+      <p class="hint">
+        Outil local pour gérer <code>questions/questions.json</code> sans éditer le JSON à la main. Rien n'est
+        envoyé où que ce soit : tout reste dans ton navigateur jusqu'à ce que tu enregistres ou exportes.
+        <a href="index.html">← Retour au jeu</a>
+      </p>
+    </header>
+
+    <div class="editor-toolbar card">
+      <input type="text" id="search-input" placeholder="Rechercher une question, une catégorie, une réponse…" />
+      <div class="editor-toolbar-actions">
+        <button class="btn-secondary" id="btn-open-file" style="display: none" title="Chrome/Edge uniquement">
+          📂 Ouvrir questions.json
+        </button>
+        <button class="btn-secondary" id="btn-import-file">📤 Importer un fichier</button>
+        <button class="btn-secondary" id="btn-save-file" style="display: none" disabled title="Chrome/Edge uniquement">
+          💾 Enregistrer
+        </button>
+        <button class="btn-secondary" id="btn-export-file">⬇️ Exporter</button>
+        <button class="btn-primary" id="btn-new-question">+ Nouvelle question</button>
+      </div>
+      <input type="file" id="file-input" accept="application/json" style="display: none" />
+    </div>
+
+    <p class="editor-status hint" id="editor-status"></p>
+
+    <div class="editor-list" id="editor-list"></div>
+  </div>
+
+  <div class="editor-modal-overlay" id="modal-overlay" style="display: none">
+    <div class="editor-modal card">
+      <h2 id="modal-title">Nouvelle question</h2>
+
+      <div class="field">
+        <label for="f-category">Catégorie</label>
+        <input type="text" id="f-category" list="category-list" placeholder="Ex : Cinéma" />
+        <datalist id="category-list"></datalist>
+      </div>
+
+      <div class="field">
+        <label for="f-question">Question</label>
+        <input type="text" id="f-question" placeholder="Ex : De quel film est tirée cette réplique ?" />
+      </div>
+
+      <div class="field">
+        <label for="f-media-type">Élément visuel (optionnel)</label>
+        <select id="f-media-type">
+          <option value="">Aucun</option>
+          <option value="image">Image / GIF</option>
+          <option value="video">Vidéo</option>
+          <option value="quote">Citation</option>
+        </select>
+      </div>
+
+      <div class="field media-field" id="field-image-src" style="display: none">
+        <label for="f-image-src">Chemin de l'image</label>
+        <input type="text" id="f-image-src" placeholder="assets/img/questions/q47.jpg" />
+      </div>
+
+      <div class="field media-field" id="field-video" style="display: none">
+        <label for="f-video-src">Chemin de la vidéo</label>
+        <input type="text" id="f-video-src" placeholder="assets/video/questions/q47.mp4" />
+        <div class="editor-checkbox-row">
+          <label><input type="checkbox" id="f-video-loop" checked /> Boucle</label>
+          <label><input type="checkbox" id="f-video-muted" checked /> Muette</label>
+        </div>
+      </div>
+
+      <div class="field media-field" id="field-quote" style="display: none">
+        <label for="f-quote-text">Texte de la citation</label>
+        <textarea id="f-quote-text" rows="2" placeholder="I'll be back."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Réponses acceptées</label>
+        <div class="tags-input" id="tags-input">
+          <div class="tags-list" id="tags-list"></div>
+          <input type="text" id="f-tag-entry" placeholder="Tape une réponse puis Entrée…" />
+        </div>
+        <p class="hint">Le titre complet suffit en général : sous-titres et sigles sont reconnus automatiquement.</p>
+      </div>
+
+      <div class="field">
+        <label for="f-time-limit">Temps limite (secondes)</label>
+        <input type="number" id="f-time-limit" min="5" max="120" value="18" />
+      </div>
+
+      <div class="field">
+        <label for="f-answer-test">🧪 Tester une réponse</label>
+        <input type="text" id="f-answer-test" placeholder="Tape une réponse pour voir si elle serait acceptée…" autocomplete="off" />
+        <p id="answer-test-result" class="answer-test-result"></p>
+      </div>
+
+      <div class="editor-preview">
+        <div class="editor-preview-label hint">Aperçu dans le jeu</div>
+        <div class="card question-card" id="preview-card">
+          <div class="progress-row">
+            <span>Question X/Y</span>
+            <span id="preview-category"></span>
+          </div>
+          <p class="question-text" id="preview-question"></p>
+          <img id="preview-image" class="question-image" style="display: none" alt="" />
+          <video id="preview-video" class="question-image question-video" style="display: none" playsinline></video>
+          <blockquote class="question-quote" id="preview-quote" style="display: none"></blockquote>
+        </div>
+      </div>
+
+      <p class="error-msg" id="modal-error"></p>
+
+      <div class="editor-modal-actions">
+        <button class="btn-secondary" id="btn-cancel">Annuler</button>
+        <button class="btn-primary" id="btn-save-question">Enregistrer cette question</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/game-engine.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>
