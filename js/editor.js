@@ -573,7 +573,7 @@
   // Pont avec js/online.js (module ES séparé à cause du SDK Firebase) : le
   // mode en ligne réutilise le même formulaire que l'édition locale pour
   // proposer une question, et dépose les questions approuvées ici.
-  window.EditorBridge = { buildDraftFromForm, addApprovedQuestion };
+  window.EditorBridge = { buildDraftFromForm, addApprovedQuestion, openModal };
 
   // ---------- Initialisation ----------
   function init() {

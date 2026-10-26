@@ -15,26 +15,41 @@
     <header class="editor-header">
       <h1><span class="glitch" data-text="Éditeur de questions">Éditeur de questions</span></h1>
       <p class="hint">
-        Outil local pour gérer <code>questions/questions.json</code> sans éditer le JSON à la main. Rien n'est
-        envoyé où que ce soit : tout reste dans ton navigateur jusqu'à ce que tu enregistres ou exportes.
+        Outil réservé aux admins pour gérer la banque de questions ; tout le monde peut en revanche proposer une
+        nouvelle question depuis ici une fois connecté.
         <a href="index.html">← Retour au jeu</a>
       </p>
     </header>
 
-    <div class="editor-toolbar card">
-      <input type="text" id="search-input" placeholder="Rechercher une question, une catégorie, une réponse…" />
-      <div class="editor-toolbar-actions">
-        <button class="btn-secondary" id="btn-open-file" style="display: none" title="Chrome/Edge uniquement">
-          📂 Ouvrir questions.json
-        </button>
-        <button class="btn-secondary" id="btn-import-file">📤 Importer un fichier</button>
-        <button class="btn-secondary" id="btn-save-file" style="display: none" disabled title="Chrome/Edge uniquement">
-          💾 Enregistrer
-        </button>
-        <button class="btn-secondary" id="btn-export-file">⬇️ Exporter</button>
-        <button class="btn-primary" id="btn-new-question">+ Nouvelle question</button>
+    <div id="admin-editor-area" style="display: none">
+      <div class="editor-toolbar card">
+        <input type="text" id="search-input" placeholder="Rechercher une question, une catégorie, une réponse…" />
+        <div class="editor-toolbar-actions">
+          <button class="btn-secondary" id="btn-open-file" style="display: none" title="Chrome/Edge uniquement">
+            📂 Ouvrir questions.json
+          </button>
+          <button class="btn-secondary" id="btn-import-file">📤 Importer un fichier</button>
+          <button class="btn-secondary" id="btn-save-file" style="display: none" disabled title="Chrome/Edge uniquement">
+            💾 Enregistrer
+          </button>
+          <button class="btn-secondary" id="btn-export-file">⬇️ Exporter</button>
+          <button class="btn-primary" id="btn-new-question">+ Nouvelle question</button>
+        </div>
+        <input type="file" id="file-input" accept="application/json" style="display: none" />
       </div>
-      <input type="file" id="file-input" accept="application/json" style="display: none" />
+
+      <p class="editor-status hint" id="editor-status"></p>
+
+      <div class="editor-list" id="editor-list"></div>
+    </div>
+
+    <div class="card" id="propose-only-area" style="display: none">
+      <h2>➕ Proposer une question</h2>
+      <p class="hint">
+        Seuls les comptes admin peuvent parcourir/modifier la banque de questions. Tu peux en revanche proposer une
+        nouvelle question — elle sera ajoutée après validation par un·e admin.
+      </p>
+      <button class="btn-primary" id="btn-open-propose-modal">Proposer une question</button>
     </div>
 
     <div class="card online-panel" id="online-panel">
@@ -70,19 +85,12 @@
       </div>
 
       <p class="hint" id="online-offline-hint">
-        Connecte-toi avec Google pour proposer une question depuis le formulaire ci-dessus (bouton "Proposer en
-        ligne"), ou pour valider les propositions de la communauté si ton compte est admin. Demande à
-        l'administrateur du projet de créer un projet Firebase — voir le README.
+        Connecte-toi avec Google pour proposer une question, ou pour valider les propositions de la communauté et
+        gérer la banque de questions si ton compte est admin.
       </p>
       <div id="online-proposals-list" class="online-proposals-list"></div>
     </div>
 
-    <p class="editor-status hint" id="editor-status"></p>
-    <p class="editor-mode-banner local" id="editor-mode-banner">
-      🔒 Mode local — tes modifications restent dans ce navigateur, elles ne changent rien pour les autres joueurs.
-    </p>
-
-    <div class="editor-list" id="editor-list"></div>
   </div>
 
   <div class="editor-modal-overlay" id="modal-overlay" style="display: none">

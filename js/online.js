@@ -215,23 +215,15 @@ async function proposeFromModal() {
   }
 }
 
-// Pour que ce soit toujours sans ambiguïté : la liste de l'éditeur accepte
-// Modifier/Supprimer pour tout le monde (outil local, marche sans compte),
-// mais seul un admin connecté publie vraiment ses changements — voir
-// window.QuestionsSync dans js/editor.js. Ce bandeau rend cette distinction
-// visible en permanence, juste au-dessus de la liste.
-function updateModeBanner() {
-  const el = $("editor-mode-banner");
-  if (!el) return;
-  if (currentIsAdmin) {
-    el.className = "editor-mode-banner live";
-    el.textContent = "🟢 Connecté·e en tant qu'admin — tes modifications sont publiées en direct, immédiatement visibles dans le jeu.";
-  } else {
-    el.className = "editor-mode-banner local";
-    el.textContent = currentUser
-      ? "🔒 Mode local — ton compte n'est pas admin, tes modifications restent dans ce navigateur."
-      : "🔒 Mode local — tes modifications restent dans ce navigateur, elles ne changent rien pour les autres joueurs.";
-  }
+// Seuls les admins voient/modifient la banque de questions complète
+// (#admin-editor-area) ; tout le monde d'autre, une fois connecté, ne voit
+// que l'entrée "Proposer une question" (#propose-only-area) — jamais les
+// deux en même temps. showPropose à false tant que l'identité du compte
+// (pseudo) n'est pas encore définie.
+function updateAdminAreaVisibility(showPropose) {
+  $("admin-editor-area").style.display = currentIsAdmin ? "block" : "none";
+  $("propose-only-area").style.display = !currentIsAdmin && showPropose ? "block" : "none";
+  $("btn-save-question").style.display = currentIsAdmin ? "inline-block" : "none";
 }
 
 function applySignedOutUI() {
@@ -248,7 +240,7 @@ function applySignedOutUI() {
   currentIsAdmin = false;
   currentIsSuperAdmin = false;
   currentPseudo = null;
-  updateModeBanner();
+  updateAdminAreaVisibility(false);
 }
 
 // Tant qu'aucun pseudo n'est choisi, on ne montre que le formulaire de
@@ -266,7 +258,7 @@ function showPseudoForm(prefill) {
   $("btn-propose-online").style.display = "none";
   $("online-proposals-list").innerHTML = "";
   $("online-pseudo-input").value = prefill || "";
-  updateModeBanner();
+  updateAdminAreaVisibility(false);
 }
 
 async function applySignedInUI(user) {
@@ -286,7 +278,7 @@ async function applySignedInUI(user) {
   currentIsAdmin = currentIsSuperAdmin || (await checkIsAdmin(user));
   $("online-admin-badge").style.display = currentIsAdmin && !currentIsSuperAdmin ? "block" : "none";
   $("super-admin-panel").style.display = currentIsSuperAdmin ? "block" : "none";
-  updateModeBanner();
+  updateAdminAreaVisibility(true);
 
   renderProposals();
 }
@@ -323,6 +315,7 @@ function init() {
 
   $("btn-google-signout").addEventListener("click", () => signOutUser());
   $("btn-propose-online").addEventListener("click", proposeFromModal);
+  $("btn-open-propose-modal").addEventListener("click", () => window.EditorBridge.openModal(null));
   $("btn-online-rename").addEventListener("click", () => showPseudoForm(currentPseudo || ""));
   $("btn-online-pseudo-save").addEventListener("click", savePseudoFromInput);
   $("online-pseudo-input").addEventListener("keydown", (e) => {

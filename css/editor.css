@@ -59,27 +59,6 @@ body.editor-body {
   margin: -6px 2px 0;
 }
 
-.editor-mode-banner {
-  margin: 0 2px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  border: 1px solid;
-}
-
-.editor-mode-banner.local {
-  color: var(--text-dim);
-  background: var(--bg-elevated);
-  border-color: var(--card-border);
-}
-
-.editor-mode-banner.live {
-  color: var(--good);
-  background: color-mix(in srgb, var(--good) 12%, var(--bg-elevated));
-  border-color: color-mix(in srgb, var(--good) 45%, var(--card-border));
-}
-
 .online-panel {
   display: flex;
   flex-direction: column;
