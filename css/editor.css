@@ -181,6 +181,15 @@ body.editor-body {
   white-space: nowrap;
 }
 
+.proposal-answers {
+  margin-top: 3px;
+  font-size: 0.82rem;
+  color: var(--good);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .proposal-meta {
   margin-top: 4px;
   font-size: 0.78rem;

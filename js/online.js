@@ -76,12 +76,17 @@ function renderProposals() {
     title.className = "proposal-title";
     title.textContent = (p.question && p.question.question) || "(sans texte)";
 
+    const answers = document.createElement("div");
+    answers.className = "proposal-answers";
+    answers.textContent = ((p.question && p.question.acceptableAnswers) || []).join(", ") || "(aucune réponse)";
+
     const meta = document.createElement("div");
     meta.className = "proposal-meta";
     const cat = (p.question && p.question.category) || "Sans catégorie";
     meta.textContent = cat + " · proposée par " + (p.proposedByName || "Anonyme") + " · " + statusLabel(p.status);
 
     main.appendChild(title);
+    main.appendChild(answers);
     main.appendChild(meta);
 
     const actions = document.createElement("div");
