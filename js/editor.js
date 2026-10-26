@@ -61,6 +61,36 @@
     return null;
   }
 
+  // Petite vignette pour reconnaître la question d'un coup d'œil dans la
+  // liste (utile notamment pour les questions qui partagent le même texte,
+  // ex : les drapeaux). Pas de vignette pour une citation (pas d'élément
+  // visuel à montrer) ni quand il n'y a aucun média.
+  function mediaThumbnail(media) {
+    if (!media) return null;
+    const wrap = document.createElement("div");
+    wrap.className = "editor-question-thumb";
+    if (media.type === "image") {
+      const img = document.createElement("img");
+      img.src = media.src;
+      img.alt = "";
+      img.loading = "lazy";
+      wrap.appendChild(img);
+    } else if (media.type === "video") {
+      const video = document.createElement("video");
+      video.src = media.src;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      wrap.appendChild(video);
+    } else if (media.type === "quote") {
+      wrap.classList.add("editor-question-thumb-quote");
+      wrap.textContent = "💬";
+    } else {
+      return null;
+    }
+    return wrap;
+  }
+
   function renderList() {
     const container = $("editor-list");
     container.innerHTML = "";
@@ -96,6 +126,9 @@
       const card = document.createElement("div");
       card.className = "editor-question-card";
 
+      const thumb = mediaThumbnail(q.media);
+      if (thumb) card.appendChild(thumb);
+
       const main = document.createElement("div");
       main.className = "editor-question-main";
 
@@ -103,18 +136,19 @@
       text.className = "editor-question-text";
       text.textContent = q.question || "(sans texte)";
 
+      const answers = document.createElement("div");
+      answers.className = "editor-question-answers";
+      answers.textContent = (q.acceptableAnswers || []).join(", ") || "(aucune réponse acceptée)";
+
       const meta = document.createElement("div");
       meta.className = "editor-question-meta";
-      const metaParts = [
-        q.category || "Sans catégorie",
-        (q.acceptableAnswers || []).length + " réponse(s)",
-        (q.timeLimit || "?") + "s",
-      ];
+      const metaParts = [q.category || "Sans catégorie", (q.timeLimit || "?") + "s"];
       const label = mediaLabel(q.media);
       if (label) metaParts.push(label);
       meta.textContent = metaParts.join(" · ");
 
       main.appendChild(text);
+      main.appendChild(answers);
       main.appendChild(meta);
 
       const actions = document.createElement("div");
