@@ -14,6 +14,7 @@ import {
 } from "./contribute.js";
 import { addAdmin, removeAdmin, watchAdmins } from "./admins.js";
 import { fetchPseudo, savePseudo } from "./profile.js";
+import { deleteQuestionMedia, isStorageUrl } from "./storage-sync.js";
 
 // Pont avec editor.js (script classique, ne peut pas importer ce module) :
 // lui permet de publier/retirer une question en direct dès qu'un admin
@@ -76,12 +77,17 @@ function renderProposals() {
     title.className = "proposal-title";
     title.textContent = (p.question && p.question.question) || "(sans texte)";
 
+    const answers = document.createElement("div");
+    answers.className = "proposal-answers";
+    answers.textContent = ((p.question && p.question.acceptableAnswers) || []).join(", ") || "(aucune réponse)";
+
     const meta = document.createElement("div");
     meta.className = "proposal-meta";
     const cat = (p.question && p.question.category) || "Sans catégorie";
     meta.textContent = cat + " · proposée par " + (p.proposedByName || "Anonyme") + " · " + statusLabel(p.status);
 
     main.appendChild(title);
+    main.appendChild(answers);
     main.appendChild(meta);
 
     const actions = document.createElement("div");
@@ -108,6 +114,29 @@ function renderProposals() {
       withdrawBtn.textContent = "Retirer";
       withdrawBtn.addEventListener("click", () => withdrawProposal(p));
       actions.appendChild(withdrawBtn);
+    }
+
+    // Une proposition rejetée avec image/vidéo laisse le fichier dans
+    // Storage (pas supprimé automatiquement, pour pouvoir y revenir) :
+    // l'admin peut le nettoyer manuellement pour gagner de la place.
+    const media = p.question && p.question.media;
+    if (currentIsAdmin && p.status === "rejected" && media && isStorageUrl(media.src)) {
+      const deleteFileBtn = document.createElement("button");
+      deleteFileBtn.className = "btn-secondary btn-danger";
+      deleteFileBtn.textContent = "🗑️ Supprimer le fichier";
+      deleteFileBtn.addEventListener("click", async () => {
+        if (!confirm("Supprimer définitivement le fichier associé à cette proposition rejetée ?")) return;
+        deleteFileBtn.disabled = true;
+        try {
+          await deleteQuestionMedia(media.src);
+          toast("Fichier supprimé.");
+          deleteFileBtn.remove();
+        } catch (err) {
+          toast("Erreur : " + err.message);
+          deleteFileBtn.disabled = false;
+        }
+      });
+      actions.appendChild(deleteFileBtn);
     }
 
     card.appendChild(main);

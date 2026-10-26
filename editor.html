@@ -119,12 +119,18 @@
       </div>
 
       <div class="field media-field" id="field-image-src" style="display: none">
-        <label for="f-image-src">Chemin de l'image</label>
+        <label for="f-image-upload">Image</label>
+        <input type="file" id="f-image-upload" accept="image/*" />
+        <p class="hint media-upload-status" id="f-image-upload-status"></p>
+        <label for="f-image-src" class="media-path-label">ou chemin existant dans le dépôt</label>
         <input type="text" id="f-image-src" placeholder="assets/img/questions/q47.jpg" />
       </div>
 
       <div class="field media-field" id="field-video" style="display: none">
-        <label for="f-video-src">Chemin de la vidéo</label>
+        <label for="f-video-upload">Vidéo</label>
+        <input type="file" id="f-video-upload" accept="video/*" />
+        <p class="hint media-upload-status" id="f-video-upload-status"></p>
+        <label for="f-video-src" class="media-path-label">ou chemin existant dans le dépôt</label>
         <input type="text" id="f-video-src" placeholder="assets/video/questions/q47.mp4" />
         <div class="editor-checkbox-row">
           <label><input type="checkbox" id="f-video-loop" checked /> Boucle</label>
@@ -186,6 +192,7 @@
   <script src="js/game-engine.js"></script>
   <script src="js/questions.js"></script>
   <script src="js/editor.js"></script>
+  <script type="module" src="js/storage-sync.js"></script>
   <script type="module" src="js/online.js"></script>
 </body>
 </html>

@@ -1,0 +1,45 @@
+rules_version = '2';
+
+// Règles de sécurité pour les fichiers (images/vidéos de question)
+// téléversés depuis l'éditeur (editor.html). Mêmes comptes et la même
+// notion d'admin que firestore.rules (vérifiée ici via firestore.exists,
+// Storage peut lire Firestore) — à tenir synchronisée si l'une des deux
+// change.
+//
+// À coller tel quel dans Firebase Console → Storage → Règles.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function myEmail() {
+      return isSignedIn() ? request.auth.token.email.lower() : "";
+    }
+
+    // Doit rester identique à firestore.rules.
+    function isSuperAdmin() {
+      return myEmail() == "advestankv@gmail.com";
+    }
+
+    function isAdmin() {
+      return isSuperAdmin() ||
+        (isSignedIn() && firestore.exists(/databases/(default)/documents/admins/$(myEmail())));
+    }
+
+    // Images/vidéos des questions, publiées ou en attente d'une proposition.
+    // Lues par tout le monde SANS connexion (le jeu doit pouvoir les
+    // afficher sans compte) ; tout compte connecté peut en ajouter une pour
+    // illustrer sa question (propre ou proposée) — taille et type limités
+    // par sécurité ; seul un admin peut en supprimer (ménage après rejet
+    // d'une proposition, ou suppression d'une question — voir js/online.js).
+    match /questions-media/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn()
+        && request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*|video/.*');
+      allow delete: if isAdmin();
+    }
+  }
+}

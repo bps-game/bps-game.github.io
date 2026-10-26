@@ -284,6 +284,46 @@
     return null;
   }
 
+  // Téléverse le fichier choisi vers Firebase Storage (voir
+  // js/storage-sync.js) et remplit le champ "chemin" correspondant avec
+  // l'URL obtenue, comme si elle avait été tapée à la main — le reste du
+  // formulaire (aperçu, validation, enregistrement/proposition) ne voit
+  // aucune différence entre un chemin tapé et un fichier téléversé.
+  function wireMediaUpload(fileInputId, statusId, targetInputId) {
+    const fileInput = $(fileInputId);
+    const status = $(statusId);
+    const target = $(targetInputId);
+
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      if (!window.MediaUpload) {
+        status.className = "hint media-upload-status error";
+        status.textContent = "❌ Téléversement indisponible (connexion à Firebase impossible).";
+        return;
+      }
+
+      status.className = "hint media-upload-status uploading";
+      status.textContent = "⏳ Envoi de « " + file.name + " »…";
+      fileInput.disabled = true;
+
+      try {
+        const url = await window.MediaUpload.upload(file);
+        target.value = url;
+        updatePreview();
+        status.className = "hint media-upload-status done";
+        status.textContent = "✅ « " + file.name + " » envoyé.";
+      } catch (err) {
+        status.className = "hint media-upload-status error";
+        status.textContent = "❌ Échec de l'envoi : " + err.message;
+      } finally {
+        fileInput.disabled = false;
+        fileInput.value = "";
+      }
+    });
+  }
+
   function updatePreview() {
     $("preview-category").textContent = $("f-category").value.trim() || "Catégorie";
     $("preview-question").textContent = $("f-question").value.trim() || "Texte de la question…";
@@ -354,6 +394,11 @@
 
     currentTags = q ? (q.acceptableAnswers || []).slice() : [];
     renderTags();
+
+    $("f-image-upload").value = "";
+    $("f-image-upload-status").textContent = "";
+    $("f-video-upload").value = "";
+    $("f-video-upload-status").textContent = "";
 
     $("f-answer-test").value = "";
     updateAnswerTest();
@@ -596,6 +641,8 @@
     $("btn-cancel").addEventListener("click", closeModal);
     $("btn-save-question").addEventListener("click", saveQuestionFromForm);
     $("f-media-type").addEventListener("change", updateMediaFieldsVisibility);
+    wireMediaUpload("f-image-upload", "f-image-upload-status", "f-image-src");
+    wireMediaUpload("f-video-upload", "f-video-upload-status", "f-video-src");
 
     ["f-category", "f-question", "f-image-src", "f-video-src", "f-video-loop", "f-video-muted", "f-quote-text"].forEach(
       (id) => $(id).addEventListener("input", updatePreview)
