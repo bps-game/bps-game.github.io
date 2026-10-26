@@ -63,32 +63,10 @@
 
   // Petite vignette pour reconnaître la question d'un coup d'œil dans la
   // liste (utile notamment pour les questions qui partagent le même texte,
-  // ex : les drapeaux). Pas de vignette pour une citation (pas d'élément
-  // visuel à montrer) ni quand il n'y a aucun média.
+  // ex : les drapeaux) — voir js/media.js (partagé avec la file de
+  // propositions, js/online.js, pour un rendu identique).
   function mediaThumbnail(media) {
-    if (!media) return null;
-    const wrap = document.createElement("div");
-    wrap.className = "editor-question-thumb";
-    if (media.type === "image") {
-      const img = document.createElement("img");
-      img.src = media.src;
-      img.alt = "";
-      img.loading = "lazy";
-      wrap.appendChild(img);
-    } else if (media.type === "video") {
-      const video = document.createElement("video");
-      video.src = media.src;
-      video.muted = true;
-      video.playsInline = true;
-      video.preload = "metadata";
-      wrap.appendChild(video);
-    } else if (media.type === "quote") {
-      wrap.classList.add("editor-question-thumb-quote");
-      wrap.textContent = "💬";
-    } else {
-      return null;
-    }
-    return wrap;
+    return window.Media.buildThumbnail(media, "editor-question-thumb");
   }
 
   function renderList() {
@@ -290,12 +268,15 @@
 
     const img = $("preview-image");
     const video = $("preview-video");
+    const youtube = $("preview-youtube");
     const quote = $("preview-quote");
     img.style.display = "none";
     img.removeAttribute("src");
     video.pause();
     video.style.display = "none";
     video.removeAttribute("src");
+    youtube.style.display = "none";
+    youtube.removeAttribute("src");
     quote.style.display = "none";
     quote.textContent = "";
 
@@ -306,11 +287,17 @@
       img.src = media.src;
       img.style.display = "block";
     } else if (media.type === "video") {
-      video.src = media.src;
-      video.loop = media.loop !== false;
-      video.muted = media.muted !== false;
-      video.style.display = "block";
-      video.play().catch(() => {});
+      const ytId = window.Media.parseYouTubeId(media.src);
+      if (ytId) {
+        youtube.src = window.Media.youtubeEmbedUrl(ytId, { autoplay: true, loop: media.loop, muted: media.muted });
+        youtube.style.display = "block";
+      } else {
+        video.src = media.src;
+        video.loop = media.loop !== false;
+        video.muted = media.muted !== false;
+        video.style.display = "block";
+        video.play().catch(() => {});
+      }
     } else if (media.type === "quote") {
       quote.textContent = media.text;
       quote.style.display = "block";

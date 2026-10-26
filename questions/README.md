@@ -39,13 +39,15 @@ Trois types sont supportés :
 "media": { "type": "video", "src": "assets/video/questions/q41.mp4" }
 // ou, pour une vidéo avec le son (ex: deviner un film à partir d'un extrait sonore) :
 "media": { "type": "video", "src": "assets/video/questions/q41.mp4", "muted": false, "loop": false }
+// ou directement un lien YouTube, intégré automatiquement :
+"media": { "type": "video", "src": "https://youtu.be/dQw4w9WgXcQ" }
 
 // Citation à deviner (affichée en grand, en italique)
 "media": { "type": "quote", "text": "I'll be back." }
 ```
 
-- **Images/GIFs** : dépose le fichier dans `assets/img/questions/` et référence-le avec son chemin relatif dans `media.src`.
-- **Vidéos** : dépose le fichier dans `assets/video/questions/` (à créer) et référence-le dans `media.src`. Format `.mp4` recommandé (compatibilité maximale). Par défaut la vidéo démarre automatiquement, est muette et boucle — passe `"muted": false` et/ou `"loop": false` si tu veux une vidéo avec son ou qui ne boucle pas.
+- **Images/GIFs** : dépose le fichier dans `assets/img/questions/` et référence-le avec son chemin relatif dans `media.src` — ou mets directement le lien d'une image déjà hébergée ailleurs (`media.src` accepte aussi bien un chemin du dépôt qu'une URL complète).
+- **Vidéos** : soit un fichier dans `assets/video/questions/` (à créer), référencé par son chemin relatif dans `media.src` ; soit directement **un lien YouTube** (vidéo classique ou short) dans `media.src`, intégré automatiquement avec le lecteur YouTube. Format `.mp4` recommandé pour un fichier (compatibilité maximale). Par défaut la vidéo démarre automatiquement, est muette et boucle — passe `"muted": false` et/ou `"loop": false` si tu veux une vidéo avec son ou qui ne boucle pas (s'applique aussi à un lien YouTube).
 - **Citations** : juste le texte dans `media.text`, pas de fichier à fournir. Pense à rester sur des citations courtes et à ne pas mettre la réponse (le titre de l'œuvre) dans le texte affiché, évidemment.
 - **Droits d'auteur** : à toi de vérifier que tu as le droit d'utiliser les images/vidéos que tu ajoutes (captures que tu as prises toi-même, contenu libre de droits...). Ce dépôt ne fournit aucune image ou vidéo par défaut, seulement quelques exemples de citations.
 

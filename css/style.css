@@ -510,6 +510,11 @@ button:disabled {
   background: #000;
 }
 
+.question-youtube {
+  background: #000;
+  border: none;
+}
+
 @media (max-width: 720px) {
   .question-image {
     height: 200px;

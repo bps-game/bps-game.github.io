@@ -125,8 +125,9 @@
       </div>
 
       <div class="field media-field" id="field-video" style="display: none">
-        <label for="f-video-src">Chemin ou lien de la vidéo</label>
-        <input type="text" id="f-video-src" placeholder="assets/video/questions/q47.mp4 ou https://…" />
+        <label for="f-video-src">Chemin, lien YouTube ou lien direct de la vidéo</label>
+        <input type="text" id="f-video-src" placeholder="assets/video/questions/q47.mp4, un lien YouTube, ou https://…" />
+        <p class="hint">Un lien YouTube (vidéo ou short) est automatiquement intégré avec le lecteur YouTube.</p>
         <div class="editor-checkbox-row">
           <label><input type="checkbox" id="f-video-loop" checked /> Boucle</label>
           <label><input type="checkbox" id="f-video-muted" checked /> Muette</label>
@@ -168,6 +169,14 @@
           <p class="question-text" id="preview-question"></p>
           <img id="preview-image" class="question-image" style="display: none" alt="" />
           <video id="preview-video" class="question-image question-video" style="display: none" playsinline></video>
+          <iframe
+            id="preview-youtube"
+            class="question-image question-youtube"
+            style="display: none"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            title="Aperçu de la vidéo YouTube"
+          ></iframe>
           <blockquote class="question-quote" id="preview-quote" style="display: none"></blockquote>
         </div>
       </div>
@@ -186,6 +195,7 @@
 
   <script src="js/game-engine.js"></script>
   <script src="js/questions.js"></script>
+  <script src="js/media.js"></script>
   <script src="js/editor.js"></script>
   <script type="module" src="js/online.js"></script>
 </body>

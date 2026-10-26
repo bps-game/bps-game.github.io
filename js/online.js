@@ -69,6 +69,9 @@ function renderProposals() {
     const card = document.createElement("div");
     card.className = "proposal-card status-" + p.status;
 
+    const thumb = window.Media.buildThumbnail(p.question && p.question.media, "proposal-thumb");
+    if (thumb) card.appendChild(thumb);
+
     const main = document.createElement("div");
     main.className = "proposal-main";
 

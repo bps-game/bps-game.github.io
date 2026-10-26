@@ -180,10 +180,12 @@
   }
 
   // Élément visuel façon Popsauce : image (fixe ou GIF), vidéo courte (muette
-  // et en boucle par défaut) ou citation à deviner. `media` est optionnel.
+  // et en boucle par défaut, locale ou lien YouTube) ou citation à deviner.
+  // `media` est optionnel.
   function renderQuestionMedia(media) {
     const img = $("question-media-image");
     const video = $("question-media-video");
+    const youtube = $("question-media-youtube");
     const quote = $("question-media-quote");
 
     img.style.display = "none";
@@ -192,6 +194,8 @@
     video.style.display = "none";
     video.removeAttribute("src");
     video.load();
+    youtube.style.display = "none";
+    youtube.removeAttribute("src");
     quote.style.display = "none";
     quote.textContent = "";
 
@@ -201,12 +205,18 @@
       img.src = media.src;
       img.style.display = "block";
     } else if (media.type === "video") {
-      video.src = media.src;
-      video.loop = media.loop !== false;
-      video.muted = media.muted !== false;
-      video.autoplay = true;
-      video.style.display = "block";
-      video.play().catch(() => {}); // l'autoplay peut être refusé, tant pis
+      const ytId = window.Media.parseYouTubeId(media.src);
+      if (ytId) {
+        youtube.src = window.Media.youtubeEmbedUrl(ytId, { autoplay: true, loop: media.loop, muted: media.muted });
+        youtube.style.display = "block";
+      } else {
+        video.src = media.src;
+        video.loop = media.loop !== false;
+        video.muted = media.muted !== false;
+        video.autoplay = true;
+        video.style.display = "block";
+        video.play().catch(() => {}); // l'autoplay peut être refusé, tant pis
+      }
     } else if (media.type === "quote") {
       quote.textContent = media.text;
       quote.style.display = "block";
