@@ -181,15 +181,6 @@ body.editor-body {
   white-space: nowrap;
 }
 
-.proposal-answers {
-  margin-top: 3px;
-  font-size: 0.82rem;
-  color: var(--good);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .proposal-meta {
   margin-top: 4px;
   font-size: 0.78rem;
@@ -380,34 +371,6 @@ body.editor-body {
   border: none;
   background: transparent;
   padding: 4px 2px;
-}
-
-.media-field input[type="file"] {
-  color: var(--text-dim);
-  font-size: 0.85rem;
-}
-
-.media-upload-status {
-  margin: 2px 0 0;
-  min-height: 1.1em;
-}
-
-.media-upload-status.uploading {
-  color: var(--text-dim);
-}
-
-.media-upload-status.done {
-  color: var(--good);
-}
-
-.media-upload-status.error {
-  color: var(--bad);
-}
-
-.media-path-label {
-  margin-top: 8px;
-  font-size: 0.78rem !important;
-  color: var(--text-dim);
 }
 
 .editor-checkbox-row {
