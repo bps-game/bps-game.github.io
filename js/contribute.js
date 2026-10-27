@@ -68,3 +68,13 @@ export function publishQuestion(question) {
 export function unpublishQuestion(id) {
   return setDoc(doc(db, QUESTIONS_COLLECTION, id), { id, deleted: true });
 }
+
+// callback() à chaque changement de la collection /questions (ajout,
+// modification, suppression — par n'importe quel admin, y compris
+// soi-même). Ne transmet pas les documents : l'appelant recharge via
+// window.Questions.load(), seul endroit qui sait fusionner avec le socle
+// statique questions/questions.json — pas la peine de dupliquer cette
+// fusion ici. Retourne une fonction à appeler pour arrêter l'écoute.
+export function watchPublishedQuestions(callback) {
+  return onSnapshot(collection(db, QUESTIONS_COLLECTION), () => callback());
+}

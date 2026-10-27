@@ -405,33 +405,29 @@
   }
 
   // Charge les questions actuellement en ligne (socle statique + Firestore,
-  // voir js/questions.js) : toujours au démarrage de la page, et à nouveau
-  // sur demande (bouton "🔄 Recharger depuis le serveur") pour voir ce qu'un
-  // autre admin vient de publier sans recharger toute la page.
-  async function loadFromServer(options) {
-    options = options || {};
-    const btn = $("btn-reload-server");
-    if (btn) btn.disabled = true;
+  // voir js/questions.js) : au démarrage de la page, et à nouveau
+  // automatiquement à chaque changement détecté par js/online.js (ajout/
+  // modification/suppression par n'importe quel admin, voir window.
+  // EditorBridge.refresh ci-dessous) — plus besoin d'un bouton manuel.
+  async function loadFromServer() {
     try {
       questions = await window.Questions.load();
       renderList();
-      if (!options.silent) toast("Questions à jour (" + questions.length + ").");
     } catch (err) {
       toast("Échec du chargement des questions : " + err.message);
-    } finally {
-      if (btn) btn.disabled = false;
     }
   }
 
   // Pont avec js/online.js (module ES séparé à cause du SDK Firebase) : le
   // mode en ligne réutilise le même formulaire que l'édition locale pour
-  // proposer une question, et dépose les questions approuvées ici.
-  window.EditorBridge = { buildDraftFromForm, addApprovedQuestion, openModal };
+  // proposer une question, dépose les questions approuvées ici, et appelle
+  // refresh() dès qu'il détecte un changement côté Firestore.
+  window.EditorBridge = { buildDraftFromForm, addApprovedQuestion, openModal, refresh: loadFromServer };
 
   // ---------- Initialisation ----------
   function init() {
     renderList();
-    loadFromServer({ silent: true });
+    loadFromServer();
 
     $("search-input").addEventListener("input", renderList);
     $("btn-new-question").addEventListener("click", () => openModal(null));
@@ -450,8 +446,6 @@
       }
     });
     $("f-answer-test").addEventListener("input", updateAnswerTest);
-
-    $("btn-reload-server").addEventListener("click", () => loadFromServer({ silent: false }));
 
     $("modal-overlay").addEventListener("click", (e) => {
       if (e.target.id === "modal-overlay") closeModal();

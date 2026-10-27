@@ -11,6 +11,7 @@ import {
   deleteProposal,
   publishQuestion,
   unpublishQuestion,
+  watchPublishedQuestions,
 } from "./contribute.js";
 import { addAdmin, removeAdmin, watchAdmins } from "./admins.js";
 import { fetchPseudo, savePseudo } from "./profile.js";
@@ -35,6 +36,7 @@ let latestProposals = [];
 let latestAdmins = [];
 let stopWatchingProposals = null;
 let stopWatchingAdmins = null;
+let stopWatchingQuestions = null;
 
 function toast(message) {
   const el = $("toast");
@@ -288,6 +290,22 @@ async function applySignedInUI(user) {
   $("super-admin-panel").style.display = currentIsSuperAdmin ? "block" : "none";
   updateAdminAreaVisibility(true);
 
+  // Resynchronise automatiquement la liste de l'éditeur dès qu'une question
+  // est ajoutée/modifiée/supprimée par n'importe quel admin (y compris
+  // soi-même) — plus besoin d'un bouton "Recharger" manuel. Stoppe d'abord
+  // une éventuelle écoute précédente : applySignedInUI peut être rappelée en
+  // cours de session (ex : après avoir changé de pseudo) sans repasser par
+  // le nettoyage de watchAuth.
+  if (stopWatchingQuestions) {
+    stopWatchingQuestions();
+    stopWatchingQuestions = null;
+  }
+  if (currentIsAdmin) {
+    stopWatchingQuestions = watchPublishedQuestions(() => {
+      if (window.EditorBridge && window.EditorBridge.refresh) window.EditorBridge.refresh();
+    });
+  }
+
   renderProposals();
 }
 
@@ -344,6 +362,10 @@ function init() {
     if (stopWatchingAdmins) {
       stopWatchingAdmins();
       stopWatchingAdmins = null;
+    }
+    if (stopWatchingQuestions) {
+      stopWatchingQuestions();
+      stopWatchingQuestions = null;
     }
 
     if (!user) {
