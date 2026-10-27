@@ -149,6 +149,7 @@
     let lastWrongAttempt = new Map(); // peerId -> dernier texte tenté (faux), pour l'affichage en correction
     let winScore = DEFAULT_WIN_SCORE; // seuil de points pour remporter la partie, réglé par l'hôte
     let questionTimeLimit = DEFAULT_TIME_LIMIT; // secondes par question, commun à toutes, réglé par l'hôte
+    let selectedCategories = []; // vide = toutes les catégories, réglé par l'hôte
 
     // players: peerId -> { id, pseudo, score, isHost }
     const players = new Map();
@@ -177,9 +178,15 @@
     }
 
     function broadcastLobby() {
-      const payload = { type: MSG.LOBBY_UPDATE, players: playersArray(), winScore, questionTimeLimit };
+      const payload = {
+        type: MSG.LOBBY_UPDATE,
+        players: playersArray(),
+        winScore,
+        questionTimeLimit,
+        selectedCategories,
+      };
       window.Network.broadcast(payload);
-      if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray(), winScore, questionTimeLimit);
+      if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray(), winScore, questionTimeLimit, selectedCategories);
     }
 
     // Statut de chaque joueur pour la question en cours : trouvé, en train
@@ -214,6 +221,7 @@
       hostOwnId = myId;
       winScore = DEFAULT_WIN_SCORE;
       questionTimeLimit = DEFAULT_TIME_LIMIT;
+      selectedCategories = [];
       players.clear();
       players.set(myId, { id: myId, pseudo: myPseudo, score: 0, streak: 0, isHost: true });
     }
@@ -231,6 +239,13 @@
       broadcastLobby();
     }
 
+    // categories vide (ou absente) = toutes les catégories, sans filtre.
+    function hostSetCategories(categories) {
+      if (currentIndex !== -1) return; // partie déjà lancée : on n'y touche plus
+      selectedCategories = Array.isArray(categories) ? categories.slice() : [];
+      broadcastLobby();
+    }
+
     function hostAddPlayer(peerId, pseudo) {
       if (players.has(peerId)) return;
       players.set(peerId, { id: peerId, pseudo: pseudo || "Joueur", score: 0, streak: 0, isHost: false });
@@ -243,10 +258,20 @@
       broadcastLobby();
     }
 
+    // Filtre par les catégories choisies dans le lobby (aucune sélection =
+    // toutes). Renvoie false (sans rien démarrer) si le filtre ne laisse
+    // aucune question — l'appelant (main.js) doit vérifier ce retour avant
+    // de considérer la partie lancée.
     function hostStartGame(loadedQuestions) {
-      questions = loadedQuestions;
+      const filtered =
+        selectedCategories.length > 0
+          ? loadedQuestions.filter((q) => selectedCategories.includes(q.category))
+          : loadedQuestions;
+      if (filtered.length === 0) return false;
+      questions = filtered;
       currentIndex = -1;
       hostNextQuestion();
+      return true;
     }
 
     function hostNextQuestion() {
@@ -387,7 +412,8 @@
         data.players.forEach((p) => players.set(p.id, p));
         winScore = data.winScore || winScore;
         questionTimeLimit = data.questionTimeLimit || questionTimeLimit;
-        if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players, winScore, questionTimeLimit);
+        selectedCategories = data.selectedCategories || selectedCategories;
+        if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players, winScore, questionTimeLimit, selectedCategories);
       } else if (data.type === MSG.QUESTION) {
         if (callbacks.question) callbacks.question(data);
       } else if (data.type === MSG.ANSWER_RESULT) {
@@ -411,6 +437,7 @@
       hostStartGame,
       hostSetWinScore,
       hostSetTimeLimit,
+      hostSetCategories,
       hostHandleAttempt,
       clientHandleMessage,
       getPlayers: playersArray,
@@ -418,6 +445,7 @@
       getCurrentIndex: () => currentIndex,
       getWinScore: () => winScore,
       getTimeLimit: () => questionTimeLimit,
+      getCategories: () => selectedCategories,
       // exposés pour les tests manuels / debug
       _internal: { normalize, isAnswerCorrect, computeScore },
     };

@@ -66,6 +66,18 @@
           </div>
         </div>
 
+        <div class="lobby-setting-block" id="lobby-categories-block">
+          <label class="hint">Catégories</label>
+          <p class="hint lobby-categories-summary" id="lobby-categories-summary">Toutes</p>
+          <div class="lobby-categories-picker" id="lobby-categories-picker" style="display: none">
+            <label class="lobby-category-option lobby-category-all">
+              <input type="checkbox" id="category-all-checkbox" checked />
+              <span>Toutes les catégories</span>
+            </label>
+            <div class="lobby-categories-list" id="lobby-categories-list"></div>
+          </div>
+        </div>
+
         <p class="hint" id="lobby-hint">En attente que l'hôte démarre la partie…</p>
         <button class="btn-primary" id="btn-start-game" style="display: none">Démarrer la partie</button>
       </div>

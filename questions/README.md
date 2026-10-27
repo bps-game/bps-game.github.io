@@ -15,7 +15,7 @@ Toutes les questions sont **à réponse libre** (tapée au clavier) — il n'y a
 ```jsonc
 {
   "id": "q41",                  // identifiant unique, libre (ex: "q41")
-  "category": "Jeux vidéo",     // affiché pendant la question, purement informatif
+  "category": "Jeux vidéo",     // affiché pendant la question, et utilisé par l'hôte dans le lobby pour choisir les catégories à inclure
   "question": "De quel jeu est tirée cette image ?",
 
   "media": null,                 // optionnel : l'élément visuel façon Popsauce (voir ci-dessous), sinon null/absent

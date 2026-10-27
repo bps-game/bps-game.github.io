@@ -239,6 +239,61 @@ body.editor-body {
   gap: 10px;
 }
 
+/* Pas de display:flex ici : <details> doit garder son display:block natif,
+   c'est ce qui permet au navigateur de cacher/afficher tout seul le contenu
+   selon l'état ouvert/fermé (repli par défaut). L'espacement entre résumé et
+   liste se fait via margin-top sur .editor-category-list ci-dessous, celui
+   entre groupes via le gap de .editor-list. */
+
+.editor-category-group summary {
+  cursor: pointer;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.editor-category-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.editor-category-group summary::before {
+  content: "▶";
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  transition: transform 0.15s ease;
+}
+
+.editor-category-group[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.editor-category-group summary:hover {
+  border-color: var(--accent);
+}
+
+.editor-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Contrôle explicite du repli : le mécanisme natif de <details> ne suffit
+   pas toujours à lui seul une fois qu'on personnalise l'affichage du
+   contenu avec une classe (display:flex ci-dessus peut prendre le pas sur
+   le masquage natif selon le moteur de rendu). */
+.editor-category-group:not([open]) .editor-category-list {
+  display: none;
+}
+
 .editor-question-card {
   display: flex;
   align-items: center;

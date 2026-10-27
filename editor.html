@@ -89,9 +89,12 @@
       <h2 id="modal-title">Nouvelle question</h2>
 
       <div class="field">
-        <label for="f-category">Catégorie</label>
-        <input type="text" id="f-category" list="category-list" placeholder="Ex : Cinéma" />
-        <datalist id="category-list"></datalist>
+        <label for="f-category-select">Catégorie</label>
+        <select id="f-category-select">
+          <option value="">— Choisir —</option>
+          <option value="__new__">+ Nouvelle catégorie…</option>
+        </select>
+        <input type="text" id="f-category-new" placeholder="Nom de la nouvelle catégorie" style="display: none; margin-top: 8px" />
       </div>
 
       <div class="field">

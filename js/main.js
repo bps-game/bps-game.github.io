@@ -9,6 +9,7 @@
   let role = null; // "host" | "client"
   let myId = null;
   let myPseudo = null;
+  let cachedQuestions = null; // questions chargées à la création de la salle (hôte), réutilisées au démarrage
 
   function init() {
     UI.initHomeTabs();
@@ -53,6 +54,7 @@
           UI.showScreen("lobby");
           createBtn.disabled = false;
           createBtn.textContent = "Créer la partie";
+          loadCategoriesForLobby();
         },
         (err) => {
           createBtn.disabled = false;
@@ -160,6 +162,22 @@
     }
   }
 
+  // Charge les questions dès la création de la salle (hôte uniquement) pour
+  // en tirer la liste des catégories affichées dans le lobby — réutilisée
+  // (sans rechargement) au clic sur "Démarrer la partie".
+  async function loadCategoriesForLobby() {
+    try {
+      cachedQuestions = await window.Questions.load();
+      const categories = Array.from(new Set(cachedQuestions.map((q) => q.category).filter(Boolean))).sort((a, b) =>
+        a.localeCompare(b, "fr")
+      );
+      UI.buildCategoryPicker(categories, (selected) => GameEngine.hostSetCategories(selected));
+    } catch (err) {
+      // Pas grave : la sélection de catégories reste vide (= toutes), et le
+      // chargement sera retenté au clic sur "Démarrer la partie".
+    }
+  }
+
   function wireLobbyScreen() {
     document.getElementById("win-score-input").addEventListener("change", (e) => {
       GameEngine.hostSetWinScore(e.target.value);
@@ -174,9 +192,14 @@
       btn.disabled = true;
       btn.textContent = "Chargement des questions…";
       try {
-        const all = await window.Questions.load();
+        const all = cachedQuestions || (await window.Questions.load());
         const prepared = window.Questions.shuffle(all);
-        GameEngine.hostStartGame(prepared);
+        const started = GameEngine.hostStartGame(prepared);
+        if (!started) {
+          UI.toast("Aucune question dans les catégories choisies.");
+          btn.disabled = false;
+          btn.textContent = "Démarrer la partie";
+        }
       } catch (err) {
         UI.toast("Erreur de chargement des questions : " + err.message);
         btn.disabled = false;
@@ -225,8 +248,8 @@
   }
 
   function wireGameEngine() {
-    GameEngine.on("lobbyUpdate", (players, winScore, timeLimit) => {
-      UI.renderLobby(players, role === "host", myId, winScore, timeLimit);
+    GameEngine.on("lobbyUpdate", (players, winScore, timeLimit, selectedCategories) => {
+      UI.renderLobby(players, role === "host", myId, winScore, timeLimit, selectedCategories);
     });
 
     GameEngine.on("question", (payload) => {

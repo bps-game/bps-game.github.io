@@ -252,6 +252,39 @@ input[type="number"]:focus {
   text-shadow: 0 0 14px rgba(0, 242, 234, 0.35);
 }
 
+.lobby-categories-summary {
+  margin: 4px 0 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.lobby-categories-picker {
+  margin-top: 8px;
+}
+
+.lobby-category-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 2px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.lobby-category-all {
+  font-weight: 700;
+  border-bottom: 1px solid var(--card-border);
+  margin-bottom: 6px;
+  padding-bottom: 10px;
+}
+
+.lobby-categories-list {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
 .answer-input-shell {
   position: relative;
 }

@@ -103,7 +103,7 @@
     requestAnimationFrame(tick);
   }
 
-  function renderLobby(players, isHost, myId, winScore, timeLimit) {
+  function renderLobby(players, isHost, myId, winScore, timeLimit, selectedCategories) {
     const list = $("lobby-players");
     list.innerHTML = "";
     players.forEach((p) => {
@@ -134,6 +134,56 @@
       if (document.activeElement !== timeLimitInput) timeLimitInput.value = timeLimit;
       timeLimitValue.textContent = timeLimit;
     }
+
+    const categoriesPicker = $("lobby-categories-picker");
+    const categoriesSummary = $("lobby-categories-summary");
+    categoriesPicker.style.display = isHost ? "block" : "none";
+    categoriesSummary.style.display = isHost ? "none" : "block";
+    if (!isHost) {
+      categoriesSummary.textContent =
+        selectedCategories && selectedCategories.length > 0 ? selectedCategories.join(", ") : "Toutes";
+    }
+  }
+
+  // Construit une fois la liste de cases à cocher du lobby (une par
+  // catégorie connue au moment de la création de la salle). onChange(list)
+  // est appelé à chaque coche/décoche avec le tableau des catégories
+  // cochées (vide = toutes, case "Toutes" re-cochée automatiquement).
+  function buildCategoryPicker(categories, onChange) {
+    const allCheckbox = $("category-all-checkbox");
+    const list = $("lobby-categories-list");
+    list.innerHTML = "";
+
+    function applySelection() {
+      const checked = Array.from(list.querySelectorAll("input:checked")).map((cb) => cb.value);
+      allCheckbox.checked = checked.length === 0;
+      onChange(checked);
+    }
+
+    categories.forEach((cat) => {
+      const label = document.createElement("label");
+      label.className = "lobby-category-option";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = cat;
+      checkbox.addEventListener("change", applySelection);
+
+      const span = document.createElement("span");
+      span.textContent = cat;
+
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      list.appendChild(label);
+    });
+
+    allCheckbox.checked = true;
+    allCheckbox.onchange = () => {
+      if (allCheckbox.checked) {
+        list.querySelectorAll("input").forEach((cb) => (cb.checked = false));
+      }
+      applySelection();
+    };
   }
 
   function setLobbyCode(code, isHost) {
@@ -548,6 +598,7 @@
     setHomeError,
     initHomeTabs,
     renderLobby,
+    buildCategoryPicker,
     setLobbyCode,
     addChatMessage,
     renderQuestion,

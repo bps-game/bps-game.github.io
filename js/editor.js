@@ -49,6 +49,74 @@
     return window.Media.buildThumbnail(media, "editor-question-thumb");
   }
 
+  function buildQuestionCard(q) {
+    const card = document.createElement("div");
+    card.className = "editor-question-card";
+
+    const thumb = mediaThumbnail(q.media);
+    if (thumb) card.appendChild(thumb);
+
+    const main = document.createElement("div");
+    main.className = "editor-question-main";
+
+    const text = document.createElement("div");
+    text.className = "editor-question-text";
+    text.textContent = q.question || "(sans texte)";
+
+    const answers = document.createElement("div");
+    answers.className = "editor-question-answers";
+    answers.textContent = (q.acceptableAnswers || []).join(", ") || "(aucune réponse acceptée)";
+
+    main.appendChild(text);
+    main.appendChild(answers);
+
+    // La catégorie est déjà l'en-tête du groupe qui contient cette carte
+    // (voir renderList) : pas la peine de la répéter ici, seul le média
+    // (s'il y en a un) reste affiché.
+    const label = mediaLabel(q.media);
+    if (label) {
+      const meta = document.createElement("div");
+      meta.className = "editor-question-meta";
+      meta.textContent = label;
+      main.appendChild(meta);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "editor-question-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "btn-secondary";
+    editBtn.textContent = "Modifier";
+    editBtn.addEventListener("click", () => openModal(q.id));
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "btn-secondary btn-danger";
+    delBtn.textContent = "Supprimer";
+    delBtn.addEventListener("click", () => deleteQuestion(q.id));
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    card.appendChild(main);
+    card.appendChild(actions);
+    return card;
+  }
+
+  // Questions regroupées par catégorie (ordre alphabétique) pour que la
+  // liste ne soit pas un unique mur de cartes à faire défiler — repliable
+  // par catégorie, voir renderList.
+  function groupByCategory(list) {
+    const groups = new Map();
+    list.forEach((q) => {
+      const cat = q.category || "Sans catégorie";
+      if (!groups.has(cat)) groups.set(cat, []);
+      groups.get(cat).push(q);
+    });
+    return Array.from(groups.keys())
+      .sort((a, b) => a.localeCompare(b, "fr"))
+      .map((cat) => ({ category: cat, items: groups.get(cat) }));
+  }
+
   function renderList() {
     const container = $("editor-list");
     container.innerHTML = "";
@@ -76,54 +144,24 @@
       return;
     }
 
-    filtered.forEach((q) => {
-      const card = document.createElement("div");
-      card.className = "editor-question-card";
+    // Repliées par défaut (pour ne pas avoir à tout faire défiler), mais
+    // ouvertes automatiquement dès qu'une recherche est en cours pour que
+    // les résultats restent visibles sans clic supplémentaire.
+    groupByCategory(filtered).forEach(({ category, items }) => {
+      const group = document.createElement("details");
+      group.className = "editor-category-group";
+      group.open = !!search;
 
-      const thumb = mediaThumbnail(q.media);
-      if (thumb) card.appendChild(thumb);
+      const summary = document.createElement("summary");
+      summary.textContent = category + " (" + items.length + ")";
+      group.appendChild(summary);
 
-      const main = document.createElement("div");
-      main.className = "editor-question-main";
+      const list = document.createElement("div");
+      list.className = "editor-category-list";
+      items.forEach((q) => list.appendChild(buildQuestionCard(q)));
+      group.appendChild(list);
 
-      const text = document.createElement("div");
-      text.className = "editor-question-text";
-      text.textContent = q.question || "(sans texte)";
-
-      const answers = document.createElement("div");
-      answers.className = "editor-question-answers";
-      answers.textContent = (q.acceptableAnswers || []).join(", ") || "(aucune réponse acceptée)";
-
-      const meta = document.createElement("div");
-      meta.className = "editor-question-meta";
-      const metaParts = [q.category || "Sans catégorie"];
-      const label = mediaLabel(q.media);
-      if (label) metaParts.push(label);
-      meta.textContent = metaParts.join(" · ");
-
-      main.appendChild(text);
-      main.appendChild(answers);
-      main.appendChild(meta);
-
-      const actions = document.createElement("div");
-      actions.className = "editor-question-actions";
-
-      const editBtn = document.createElement("button");
-      editBtn.className = "btn-secondary";
-      editBtn.textContent = "Modifier";
-      editBtn.addEventListener("click", () => openModal(q.id));
-
-      const delBtn = document.createElement("button");
-      delBtn.className = "btn-secondary btn-danger";
-      delBtn.textContent = "Supprimer";
-      delBtn.addEventListener("click", () => deleteQuestion(q.id));
-
-      actions.appendChild(editBtn);
-      actions.appendChild(delBtn);
-
-      card.appendChild(main);
-      card.appendChild(actions);
-      container.appendChild(card);
+      container.appendChild(group);
     });
   }
 
@@ -138,18 +176,65 @@
   }
 
   // ---------- Formulaire (création / édition) ----------
-  function updateCategoryList() {
-    const list = $("category-list");
-    list.innerHTML = "";
+  function distinctCategories() {
     const seen = new Set();
     questions.forEach((q) => {
-      if (q.category && !seen.has(q.category)) {
-        seen.add(q.category);
-        const opt = document.createElement("option");
-        opt.value = q.category;
-        list.appendChild(opt);
-      }
+      if (q.category) seen.add(q.category);
     });
+    return Array.from(seen).sort((a, b) => a.localeCompare(b, "fr"));
+  }
+
+  // Remplit le menu déroulant avec toutes les catégories existantes (+
+  // l'option "Nouvelle catégorie"), et présélectionne `selectedCategory` si
+  // fournie (cas d'une question en cours de modification).
+  function updateCategorySelect(selectedCategory) {
+    const categories = distinctCategories();
+    if (selectedCategory && !categories.includes(selectedCategory)) {
+      categories.push(selectedCategory);
+      categories.sort((a, b) => a.localeCompare(b, "fr"));
+    }
+
+    const select = $("f-category-select");
+    select.innerHTML = "";
+
+    const emptyOpt = document.createElement("option");
+    emptyOpt.value = "";
+    emptyOpt.textContent = "— Choisir —";
+    select.appendChild(emptyOpt);
+
+    categories.forEach((cat) => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+
+    const newOpt = document.createElement("option");
+    newOpt.value = "__new__";
+    newOpt.textContent = "+ Nouvelle catégorie…";
+    select.appendChild(newOpt);
+
+    select.value = selectedCategory || "";
+    updateCategoryNewFieldVisibility();
+  }
+
+  // Affiche/cache le champ texte "nom de la nouvelle catégorie" selon que le
+  // menu déroulant est sur "+ Nouvelle catégorie…" ou non.
+  function updateCategoryNewFieldVisibility() {
+    const select = $("f-category-select");
+    const newInput = $("f-category-new");
+    const isNew = select.value === "__new__";
+    newInput.style.display = isNew ? "block" : "none";
+    if (isNew) newInput.focus();
+    else newInput.value = "";
+  }
+
+  // Valeur de catégorie réellement choisie, que ce soit une catégorie
+  // existante sélectionnée dans le menu, ou le texte tapé pour une nouvelle.
+  function getCategoryValue() {
+    const select = $("f-category-select");
+    if (select.value === "__new__") return $("f-category-new").value.trim();
+    return select.value;
   }
 
   function renderTags() {
@@ -238,7 +323,7 @@
   }
 
   function updatePreview() {
-    $("preview-category").textContent = $("f-category").value.trim() || "Catégorie";
+    $("preview-category").textContent = getCategoryValue() || "Catégorie";
     $("preview-question").textContent = $("f-question").value.trim() || "Texte de la question…";
 
     const img = $("preview-image");
@@ -302,7 +387,6 @@
     const q = id ? questions.find((x) => x.id === id) : null;
 
     $("modal-title").textContent = q ? "Modifier la question" : "Nouvelle question";
-    $("f-category").value = (q && q.category) || "";
     $("f-question").value = (q && q.question) || "";
 
     const mediaType = q && q.media ? q.media.type : "";
@@ -318,11 +402,11 @@
 
     $("f-answer-test").value = "";
     updateAnswerTest();
-    updateCategoryList();
+    updateCategorySelect(q && q.category);
     updateMediaFieldsVisibility();
     $("modal-error").textContent = "";
     $("modal-overlay").style.display = "flex";
-    $("f-category").focus();
+    $("f-category-select").focus();
   }
 
   function closeModal() {
@@ -338,7 +422,7 @@
   function buildDraftFromForm() {
     const draft = {
       id: editingId || nextId(),
-      category: $("f-category").value.trim(),
+      category: getCategoryValue(),
       question: $("f-question").value.trim(),
       acceptableAnswers: currentTags.slice(),
     };
@@ -432,8 +516,12 @@
     $("btn-cancel").addEventListener("click", closeModal);
     $("btn-save-question").addEventListener("click", saveQuestionFromForm);
     $("f-media-type").addEventListener("change", updateMediaFieldsVisibility);
+    $("f-category-select").addEventListener("change", () => {
+      updateCategoryNewFieldVisibility();
+      updatePreview();
+    });
 
-    ["f-category", "f-question", "f-image-src", "f-video-src", "f-video-loop", "f-video-muted", "f-quote-text"].forEach(
+    ["f-category-new", "f-question", "f-image-src", "f-video-src", "f-video-loop", "f-video-muted", "f-quote-text"].forEach(
       (id) => $(id).addEventListener("input", updatePreview)
     );
 
