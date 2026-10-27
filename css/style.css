@@ -223,23 +223,29 @@ input[type="number"]:focus {
   border-color: var(--primary);
 }
 
-.win-score-block {
+.lobby-settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.lobby-setting-block {
   margin-bottom: 14px;
 }
 
-.win-score-row {
+.lobby-setting-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 6px;
 }
 
-#win-score-input {
+.lobby-setting-input {
   width: 100px;
   text-align: center;
 }
 
-.win-score-value {
+.lobby-setting-value {
   font-weight: 800;
   font-size: 1.2rem;
   color: var(--accent);

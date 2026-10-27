@@ -26,6 +26,8 @@
   const MIN_POINTS_PER_QUESTION = 1; // une bonne réponse rapporte toujours au moins 1 point
   const SCORE_DECAY_WINDOW_MS = 12000;
   const DEFAULT_WIN_SCORE = 100; // seuil de victoire par défaut, réglable par l'hôte dans le lobby
+  const DEFAULT_TIME_LIMIT = 15; // secondes par question par défaut, réglable par l'hôte dans le lobby
+  const MIN_TIME_LIMIT = 3;
 
   // Plage Unicode des diacritiques combinants (0300-036F), construite via
   // String.fromCharCode pour éviter tout souci d'échappement de séquence
@@ -146,6 +148,7 @@
     let currentAnswers = new Map(); // peerId -> { answer, gained } (réponses CORRECTES verrouillées)
     let lastWrongAttempt = new Map(); // peerId -> dernier texte tenté (faux), pour l'affichage en correction
     let winScore = DEFAULT_WIN_SCORE; // seuil de points pour remporter la partie, réglé par l'hôte
+    let questionTimeLimit = DEFAULT_TIME_LIMIT; // secondes par question, commun à toutes, réglé par l'hôte
 
     // players: peerId -> { id, pseudo, score, isHost }
     const players = new Map();
@@ -174,9 +177,9 @@
     }
 
     function broadcastLobby() {
-      const payload = { type: MSG.LOBBY_UPDATE, players: playersArray(), winScore };
+      const payload = { type: MSG.LOBBY_UPDATE, players: playersArray(), winScore, questionTimeLimit };
       window.Network.broadcast(payload);
-      if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray(), winScore);
+      if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(playersArray(), winScore, questionTimeLimit);
     }
 
     // Statut de chaque joueur pour la question en cours : trouvé, en train
@@ -210,14 +213,21 @@
       role = "host";
       hostOwnId = myId;
       winScore = DEFAULT_WIN_SCORE;
+      questionTimeLimit = DEFAULT_TIME_LIMIT;
       players.clear();
       players.set(myId, { id: myId, pseudo: myPseudo, score: 0, streak: 0, isHost: true });
     }
 
-    // Réglable uniquement depuis le lobby, avant le lancement de la partie.
+    // Réglables uniquement depuis le lobby, avant le lancement de la partie.
     function hostSetWinScore(value) {
       if (currentIndex !== -1) return; // partie déjà lancée : on n'y touche plus
       winScore = Math.max(1, Math.round(Number(value) || DEFAULT_WIN_SCORE));
+      broadcastLobby();
+    }
+
+    function hostSetTimeLimit(value) {
+      if (currentIndex !== -1) return; // partie déjà lancée : on n'y touche plus
+      questionTimeLimit = Math.max(MIN_TIME_LIMIT, Math.round(Number(value) || DEFAULT_TIME_LIMIT));
       broadcastLobby();
     }
 
@@ -258,13 +268,13 @@
         category: q.category,
         text: q.question,
         media: q.media || null,
-        timeLimit: q.timeLimit,
+        timeLimit: questionTimeLimit,
         winScore,
       };
       window.Network.broadcast(payload);
       if (callbacks.question) callbacks.question(payload);
       broadcastLiveStatus();
-      questionTimer = setTimeout(() => hostRevealAnswer(), q.timeLimit * 1000 + 300);
+      questionTimer = setTimeout(() => hostRevealAnswer(), questionTimeLimit * 1000 + 300);
     }
 
     // Le joueur peut retenter autant de fois qu'il veut jusqu'à expiration du
@@ -376,7 +386,8 @@
         players.clear();
         data.players.forEach((p) => players.set(p.id, p));
         winScore = data.winScore || winScore;
-        if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players, winScore);
+        questionTimeLimit = data.questionTimeLimit || questionTimeLimit;
+        if (callbacks.lobbyUpdate) callbacks.lobbyUpdate(data.players, winScore, questionTimeLimit);
       } else if (data.type === MSG.QUESTION) {
         if (callbacks.question) callbacks.question(data);
       } else if (data.type === MSG.ANSWER_RESULT) {
@@ -399,12 +410,14 @@
       hostRemovePlayer,
       hostStartGame,
       hostSetWinScore,
+      hostSetTimeLimit,
       hostHandleAttempt,
       clientHandleMessage,
       getPlayers: playersArray,
       getRole: () => role,
       getCurrentIndex: () => currentIndex,
       getWinScore: () => winScore,
+      getTimeLimit: () => questionTimeLimit,
       // exposés pour les tests manuels / debug
       _internal: { normalize, isAnswerCorrect, computeScore },
     };

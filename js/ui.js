@@ -103,7 +103,7 @@
     requestAnimationFrame(tick);
   }
 
-  function renderLobby(players, isHost, myId, winScore) {
+  function renderLobby(players, isHost, myId, winScore, timeLimit) {
     const list = $("lobby-players");
     list.innerHTML = "";
     players.forEach((p) => {
@@ -124,6 +124,15 @@
     if (typeof winScore === "number") {
       if (document.activeElement !== winScoreInput) winScoreInput.value = winScore;
       winScoreValue.textContent = winScore;
+    }
+
+    const timeLimitInput = $("time-limit-input");
+    const timeLimitValue = $("time-limit-value");
+    timeLimitInput.style.display = isHost ? "inline-block" : "none";
+    timeLimitValue.style.display = isHost ? "none" : "inline";
+    if (typeof timeLimit === "number") {
+      if (document.activeElement !== timeLimitInput) timeLimitInput.value = timeLimit;
+      timeLimitValue.textContent = timeLimit;
     }
   }
 

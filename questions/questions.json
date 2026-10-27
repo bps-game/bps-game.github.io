@@ -9,8 +9,7 @@
     },
     "acceptableAnswers": [
       "Afghanistan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-al",
@@ -22,8 +21,7 @@
     },
     "acceptableAnswers": [
       "Albanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-dz",
@@ -35,8 +33,7 @@
     },
     "acceptableAnswers": [
       "Algérie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ad",
@@ -48,8 +45,7 @@
     },
     "acceptableAnswers": [
       "Andorre"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ao",
@@ -61,8 +57,7 @@
     },
     "acceptableAnswers": [
       "Angola"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ag",
@@ -74,8 +69,7 @@
     },
     "acceptableAnswers": [
       "Antigua-et-Barbuda"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ar",
@@ -87,8 +81,7 @@
     },
     "acceptableAnswers": [
       "Argentine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-am",
@@ -100,8 +93,7 @@
     },
     "acceptableAnswers": [
       "Arménie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-au",
@@ -113,8 +105,7 @@
     },
     "acceptableAnswers": [
       "Australie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-at",
@@ -126,8 +117,7 @@
     },
     "acceptableAnswers": [
       "Autriche"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-az",
@@ -139,8 +129,7 @@
     },
     "acceptableAnswers": [
       "Azerbaïdjan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bs",
@@ -152,8 +141,7 @@
     },
     "acceptableAnswers": [
       "Bahamas"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bh",
@@ -165,8 +153,7 @@
     },
     "acceptableAnswers": [
       "Bahreïn"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bd",
@@ -178,8 +165,7 @@
     },
     "acceptableAnswers": [
       "Bangladesh"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bb",
@@ -191,8 +177,7 @@
     },
     "acceptableAnswers": [
       "Barbade"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-by",
@@ -204,8 +189,7 @@
     },
     "acceptableAnswers": [
       "Biélorussie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-be",
@@ -217,8 +201,7 @@
     },
     "acceptableAnswers": [
       "Belgique"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bz",
@@ -230,8 +213,7 @@
     },
     "acceptableAnswers": [
       "Belize"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bj",
@@ -243,8 +225,7 @@
     },
     "acceptableAnswers": [
       "Bénin"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bt",
@@ -256,8 +237,7 @@
     },
     "acceptableAnswers": [
       "Bhoutan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bo",
@@ -269,8 +249,7 @@
     },
     "acceptableAnswers": [
       "Bolivie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ba",
@@ -282,8 +261,7 @@
     },
     "acceptableAnswers": [
       "Bosnie-Herzégovine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bw",
@@ -295,8 +273,7 @@
     },
     "acceptableAnswers": [
       "Botswana"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-br",
@@ -308,8 +285,7 @@
     },
     "acceptableAnswers": [
       "Brésil"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bn",
@@ -321,8 +297,7 @@
     },
     "acceptableAnswers": [
       "Brunei"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bg",
@@ -334,8 +309,7 @@
     },
     "acceptableAnswers": [
       "Bulgarie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bf",
@@ -347,8 +321,7 @@
     },
     "acceptableAnswers": [
       "Burkina Faso"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-bi",
@@ -360,8 +333,7 @@
     },
     "acceptableAnswers": [
       "Burundi"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cv",
@@ -373,8 +345,7 @@
     },
     "acceptableAnswers": [
       "Cap-Vert"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kh",
@@ -386,8 +357,7 @@
     },
     "acceptableAnswers": [
       "Cambodge"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cm",
@@ -399,8 +369,7 @@
     },
     "acceptableAnswers": [
       "Cameroun"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ca",
@@ -412,8 +381,7 @@
     },
     "acceptableAnswers": [
       "Canada"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cf",
@@ -425,8 +393,7 @@
     },
     "acceptableAnswers": [
       "République centrafricaine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-td",
@@ -438,8 +405,7 @@
     },
     "acceptableAnswers": [
       "Tchad"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cl",
@@ -451,8 +417,7 @@
     },
     "acceptableAnswers": [
       "Chili"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cn",
@@ -464,8 +429,7 @@
     },
     "acceptableAnswers": [
       "Chine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-co",
@@ -477,8 +441,7 @@
     },
     "acceptableAnswers": [
       "Colombie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-km",
@@ -490,8 +453,7 @@
     },
     "acceptableAnswers": [
       "Comores"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cg",
@@ -504,8 +466,7 @@
     "acceptableAnswers": [
       "Congo",
       "République du Congo"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cr",
@@ -517,8 +478,7 @@
     },
     "acceptableAnswers": [
       "Costa Rica"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ci",
@@ -530,8 +490,7 @@
     },
     "acceptableAnswers": [
       "Côte d'Ivoire"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-hr",
@@ -543,8 +502,7 @@
     },
     "acceptableAnswers": [
       "Croatie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cu",
@@ -556,8 +514,7 @@
     },
     "acceptableAnswers": [
       "Cuba"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cy",
@@ -569,8 +526,7 @@
     },
     "acceptableAnswers": [
       "Chypre"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cz",
@@ -583,8 +539,7 @@
     "acceptableAnswers": [
       "Tchéquie",
       "République tchèque"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kp",
@@ -596,8 +551,7 @@
     },
     "acceptableAnswers": [
       "Corée du Nord"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-cd",
@@ -610,8 +564,7 @@
     "acceptableAnswers": [
       "République démocratique du Congo",
       "RDC"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-dk",
@@ -623,8 +576,7 @@
     },
     "acceptableAnswers": [
       "Danemark"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-dj",
@@ -636,8 +588,7 @@
     },
     "acceptableAnswers": [
       "Djibouti"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-dm",
@@ -649,8 +600,7 @@
     },
     "acceptableAnswers": [
       "Dominique"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-do",
@@ -662,8 +612,7 @@
     },
     "acceptableAnswers": [
       "République dominicaine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ec",
@@ -675,8 +624,7 @@
     },
     "acceptableAnswers": [
       "Équateur"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-eg",
@@ -688,8 +636,7 @@
     },
     "acceptableAnswers": [
       "Égypte"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sv",
@@ -701,8 +648,7 @@
     },
     "acceptableAnswers": [
       "Salvador"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gq",
@@ -714,8 +660,7 @@
     },
     "acceptableAnswers": [
       "Guinée équatoriale"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-er",
@@ -727,8 +672,7 @@
     },
     "acceptableAnswers": [
       "Érythrée"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ee",
@@ -740,8 +684,7 @@
     },
     "acceptableAnswers": [
       "Estonie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sz",
@@ -754,8 +697,7 @@
     "acceptableAnswers": [
       "Eswatini",
       "Swaziland"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-et",
@@ -767,8 +709,7 @@
     },
     "acceptableAnswers": [
       "Éthiopie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-fj",
@@ -780,8 +721,7 @@
     },
     "acceptableAnswers": [
       "Fidji"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-fi",
@@ -793,8 +733,7 @@
     },
     "acceptableAnswers": [
       "Finlande"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-fr",
@@ -806,8 +745,7 @@
     },
     "acceptableAnswers": [
       "France"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ga",
@@ -819,8 +757,7 @@
     },
     "acceptableAnswers": [
       "Gabon"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gm",
@@ -832,8 +769,7 @@
     },
     "acceptableAnswers": [
       "Gambie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ge",
@@ -845,8 +781,7 @@
     },
     "acceptableAnswers": [
       "Géorgie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-de",
@@ -858,8 +793,7 @@
     },
     "acceptableAnswers": [
       "Allemagne"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gh",
@@ -871,8 +805,7 @@
     },
     "acceptableAnswers": [
       "Ghana"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gr",
@@ -884,8 +817,7 @@
     },
     "acceptableAnswers": [
       "Grèce"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gd",
@@ -897,8 +829,7 @@
     },
     "acceptableAnswers": [
       "Grenade"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gt",
@@ -910,8 +841,7 @@
     },
     "acceptableAnswers": [
       "Guatemala"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gn",
@@ -923,8 +853,7 @@
     },
     "acceptableAnswers": [
       "Guinée"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gw",
@@ -936,8 +865,7 @@
     },
     "acceptableAnswers": [
       "Guinée-Bissau"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gy",
@@ -949,8 +877,7 @@
     },
     "acceptableAnswers": [
       "Guyana"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ht",
@@ -962,8 +889,7 @@
     },
     "acceptableAnswers": [
       "Haïti"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-hn",
@@ -975,8 +901,7 @@
     },
     "acceptableAnswers": [
       "Honduras"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-hu",
@@ -988,8 +913,7 @@
     },
     "acceptableAnswers": [
       "Hongrie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-is",
@@ -1001,8 +925,7 @@
     },
     "acceptableAnswers": [
       "Islande"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-in",
@@ -1014,8 +937,7 @@
     },
     "acceptableAnswers": [
       "Inde"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-id",
@@ -1027,8 +949,7 @@
     },
     "acceptableAnswers": [
       "Indonésie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ir",
@@ -1040,8 +961,7 @@
     },
     "acceptableAnswers": [
       "Iran"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-iq",
@@ -1053,8 +973,7 @@
     },
     "acceptableAnswers": [
       "Irak"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ie",
@@ -1066,8 +985,7 @@
     },
     "acceptableAnswers": [
       "Irlande"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-il",
@@ -1079,8 +997,7 @@
     },
     "acceptableAnswers": [
       "Israël"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-it",
@@ -1092,8 +1009,7 @@
     },
     "acceptableAnswers": [
       "Italie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-jm",
@@ -1105,8 +1021,7 @@
     },
     "acceptableAnswers": [
       "Jamaïque"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-jp",
@@ -1118,8 +1033,7 @@
     },
     "acceptableAnswers": [
       "Japon"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-jo",
@@ -1131,8 +1045,7 @@
     },
     "acceptableAnswers": [
       "Jordanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kz",
@@ -1144,8 +1057,7 @@
     },
     "acceptableAnswers": [
       "Kazakhstan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ke",
@@ -1157,8 +1069,7 @@
     },
     "acceptableAnswers": [
       "Kenya"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ki",
@@ -1170,8 +1081,7 @@
     },
     "acceptableAnswers": [
       "Kiribati"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kw",
@@ -1183,8 +1093,7 @@
     },
     "acceptableAnswers": [
       "Koweït"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kg",
@@ -1196,8 +1105,7 @@
     },
     "acceptableAnswers": [
       "Kirghizistan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-la",
@@ -1209,8 +1117,7 @@
     },
     "acceptableAnswers": [
       "Laos"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lv",
@@ -1222,8 +1129,7 @@
     },
     "acceptableAnswers": [
       "Lettonie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lb",
@@ -1235,8 +1141,7 @@
     },
     "acceptableAnswers": [
       "Liban"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ls",
@@ -1248,8 +1153,7 @@
     },
     "acceptableAnswers": [
       "Lesotho"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lr",
@@ -1261,8 +1165,7 @@
     },
     "acceptableAnswers": [
       "Liberia"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ly",
@@ -1274,8 +1177,7 @@
     },
     "acceptableAnswers": [
       "Libye"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-li",
@@ -1287,8 +1189,7 @@
     },
     "acceptableAnswers": [
       "Liechtenstein"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lt",
@@ -1300,8 +1201,7 @@
     },
     "acceptableAnswers": [
       "Lituanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lu",
@@ -1313,8 +1213,7 @@
     },
     "acceptableAnswers": [
       "Luxembourg"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mg",
@@ -1326,8 +1225,7 @@
     },
     "acceptableAnswers": [
       "Madagascar"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mw",
@@ -1339,8 +1237,7 @@
     },
     "acceptableAnswers": [
       "Malawi"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-my",
@@ -1352,8 +1249,7 @@
     },
     "acceptableAnswers": [
       "Malaisie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mv",
@@ -1365,8 +1261,7 @@
     },
     "acceptableAnswers": [
       "Maldives"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ml",
@@ -1378,8 +1273,7 @@
     },
     "acceptableAnswers": [
       "Mali"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mt",
@@ -1391,8 +1285,7 @@
     },
     "acceptableAnswers": [
       "Malte"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mh",
@@ -1404,8 +1297,7 @@
     },
     "acceptableAnswers": [
       "Îles Marshall"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mr",
@@ -1417,8 +1309,7 @@
     },
     "acceptableAnswers": [
       "Mauritanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mu",
@@ -1430,8 +1321,7 @@
     },
     "acceptableAnswers": [
       "Maurice"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mx",
@@ -1443,8 +1333,7 @@
     },
     "acceptableAnswers": [
       "Mexique"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-fm",
@@ -1456,8 +1345,7 @@
     },
     "acceptableAnswers": [
       "Micronésie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mc",
@@ -1469,8 +1357,7 @@
     },
     "acceptableAnswers": [
       "Monaco"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mn",
@@ -1482,8 +1369,7 @@
     },
     "acceptableAnswers": [
       "Mongolie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-me",
@@ -1495,8 +1381,7 @@
     },
     "acceptableAnswers": [
       "Monténégro"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ma",
@@ -1508,8 +1393,7 @@
     },
     "acceptableAnswers": [
       "Maroc"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mz",
@@ -1521,8 +1405,7 @@
     },
     "acceptableAnswers": [
       "Mozambique"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mm",
@@ -1535,8 +1418,7 @@
     "acceptableAnswers": [
       "Myanmar",
       "Birmanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-na",
@@ -1548,8 +1430,7 @@
     },
     "acceptableAnswers": [
       "Namibie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-nr",
@@ -1561,8 +1442,7 @@
     },
     "acceptableAnswers": [
       "Nauru"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-np",
@@ -1574,8 +1454,7 @@
     },
     "acceptableAnswers": [
       "Népal"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-nl",
@@ -1587,8 +1466,7 @@
     },
     "acceptableAnswers": [
       "Pays-Bas"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-nz",
@@ -1600,8 +1478,7 @@
     },
     "acceptableAnswers": [
       "Nouvelle-Zélande"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ni",
@@ -1613,8 +1490,7 @@
     },
     "acceptableAnswers": [
       "Nicaragua"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ne",
@@ -1626,8 +1502,7 @@
     },
     "acceptableAnswers": [
       "Niger"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ng",
@@ -1640,8 +1515,7 @@
     "acceptableAnswers": [
       "Nigeria",
       "Nigéria"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-mk",
@@ -1654,8 +1528,7 @@
     "acceptableAnswers": [
       "Macédoine du Nord",
       "Macédoine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-no",
@@ -1667,8 +1540,7 @@
     },
     "acceptableAnswers": [
       "Norvège"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-om",
@@ -1680,8 +1552,7 @@
     },
     "acceptableAnswers": [
       "Oman"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pk",
@@ -1693,8 +1564,7 @@
     },
     "acceptableAnswers": [
       "Pakistan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pw",
@@ -1706,8 +1576,7 @@
     },
     "acceptableAnswers": [
       "Palaos"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pa",
@@ -1719,8 +1588,7 @@
     },
     "acceptableAnswers": [
       "Panama"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pg",
@@ -1732,8 +1600,7 @@
     },
     "acceptableAnswers": [
       "Papouasie-Nouvelle-Guinée"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-py",
@@ -1745,8 +1612,7 @@
     },
     "acceptableAnswers": [
       "Paraguay"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pe",
@@ -1758,8 +1624,7 @@
     },
     "acceptableAnswers": [
       "Pérou"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ph",
@@ -1771,8 +1636,7 @@
     },
     "acceptableAnswers": [
       "Philippines"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pl",
@@ -1784,8 +1648,7 @@
     },
     "acceptableAnswers": [
       "Pologne"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-pt",
@@ -1797,8 +1660,7 @@
     },
     "acceptableAnswers": [
       "Portugal"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-qa",
@@ -1810,8 +1672,7 @@
     },
     "acceptableAnswers": [
       "Qatar"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kr",
@@ -1823,8 +1684,7 @@
     },
     "acceptableAnswers": [
       "Corée du Sud"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-md",
@@ -1836,8 +1696,7 @@
     },
     "acceptableAnswers": [
       "Moldavie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ro",
@@ -1849,8 +1708,7 @@
     },
     "acceptableAnswers": [
       "Roumanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ru",
@@ -1862,8 +1720,7 @@
     },
     "acceptableAnswers": [
       "Russie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-rw",
@@ -1875,8 +1732,7 @@
     },
     "acceptableAnswers": [
       "Rwanda"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-kn",
@@ -1888,8 +1744,7 @@
     },
     "acceptableAnswers": [
       "Saint-Christophe-et-Niévès"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lc",
@@ -1901,8 +1756,7 @@
     },
     "acceptableAnswers": [
       "Sainte-Lucie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-vc",
@@ -1914,8 +1768,7 @@
     },
     "acceptableAnswers": [
       "Saint-Vincent-et-les-Grenadines"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ws",
@@ -1927,8 +1780,7 @@
     },
     "acceptableAnswers": [
       "Samoa"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sm",
@@ -1940,8 +1792,7 @@
     },
     "acceptableAnswers": [
       "Saint-Marin"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-st",
@@ -1953,8 +1804,7 @@
     },
     "acceptableAnswers": [
       "Sao Tomé-et-Principe"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sa",
@@ -1966,8 +1816,7 @@
     },
     "acceptableAnswers": [
       "Arabie saoudite"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sn",
@@ -1979,8 +1828,7 @@
     },
     "acceptableAnswers": [
       "Sénégal"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-rs",
@@ -1992,8 +1840,7 @@
     },
     "acceptableAnswers": [
       "Serbie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sc",
@@ -2005,8 +1852,7 @@
     },
     "acceptableAnswers": [
       "Seychelles"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sl",
@@ -2018,8 +1864,7 @@
     },
     "acceptableAnswers": [
       "Sierra Leone"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sg",
@@ -2031,8 +1876,7 @@
     },
     "acceptableAnswers": [
       "Singapour"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sk",
@@ -2044,8 +1888,7 @@
     },
     "acceptableAnswers": [
       "Slovaquie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-si",
@@ -2057,8 +1900,7 @@
     },
     "acceptableAnswers": [
       "Slovénie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sb",
@@ -2070,8 +1912,7 @@
     },
     "acceptableAnswers": [
       "Îles Salomon"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-so",
@@ -2083,8 +1924,7 @@
     },
     "acceptableAnswers": [
       "Somalie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-za",
@@ -2096,8 +1936,7 @@
     },
     "acceptableAnswers": [
       "Afrique du Sud"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ss",
@@ -2109,8 +1948,7 @@
     },
     "acceptableAnswers": [
       "Soudan du Sud"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-es",
@@ -2122,8 +1960,7 @@
     },
     "acceptableAnswers": [
       "Espagne"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-lk",
@@ -2135,8 +1972,7 @@
     },
     "acceptableAnswers": [
       "Sri Lanka"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sd",
@@ -2148,8 +1984,7 @@
     },
     "acceptableAnswers": [
       "Soudan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sr",
@@ -2161,8 +1996,7 @@
     },
     "acceptableAnswers": [
       "Suriname"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-se",
@@ -2174,8 +2008,7 @@
     },
     "acceptableAnswers": [
       "Suède"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ch",
@@ -2187,8 +2020,7 @@
     },
     "acceptableAnswers": [
       "Suisse"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-sy",
@@ -2200,8 +2032,7 @@
     },
     "acceptableAnswers": [
       "Syrie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tj",
@@ -2213,8 +2044,7 @@
     },
     "acceptableAnswers": [
       "Tadjikistan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-th",
@@ -2226,8 +2056,7 @@
     },
     "acceptableAnswers": [
       "Thaïlande"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tl",
@@ -2239,8 +2068,7 @@
     },
     "acceptableAnswers": [
       "Timor oriental"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tg",
@@ -2252,8 +2080,7 @@
     },
     "acceptableAnswers": [
       "Togo"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-to",
@@ -2265,8 +2092,7 @@
     },
     "acceptableAnswers": [
       "Tonga"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tt",
@@ -2278,8 +2104,7 @@
     },
     "acceptableAnswers": [
       "Trinité-et-Tobago"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tn",
@@ -2291,8 +2116,7 @@
     },
     "acceptableAnswers": [
       "Tunisie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tr",
@@ -2304,8 +2128,7 @@
     },
     "acceptableAnswers": [
       "Turquie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tm",
@@ -2317,8 +2140,7 @@
     },
     "acceptableAnswers": [
       "Turkménistan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tv",
@@ -2330,8 +2152,7 @@
     },
     "acceptableAnswers": [
       "Tuvalu"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ug",
@@ -2343,8 +2164,7 @@
     },
     "acceptableAnswers": [
       "Ouganda"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ua",
@@ -2356,8 +2176,7 @@
     },
     "acceptableAnswers": [
       "Ukraine"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ae",
@@ -2369,8 +2188,7 @@
     },
     "acceptableAnswers": [
       "Émirats arabes unis"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-gb",
@@ -2382,8 +2200,7 @@
     },
     "acceptableAnswers": [
       "Royaume-Uni"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-tz",
@@ -2395,8 +2212,7 @@
     },
     "acceptableAnswers": [
       "Tanzanie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-us",
@@ -2408,8 +2224,7 @@
     },
     "acceptableAnswers": [
       "États-Unis"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-uy",
@@ -2421,8 +2236,7 @@
     },
     "acceptableAnswers": [
       "Uruguay"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-uz",
@@ -2434,8 +2248,7 @@
     },
     "acceptableAnswers": [
       "Ouzbékistan"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-vu",
@@ -2447,8 +2260,7 @@
     },
     "acceptableAnswers": [
       "Vanuatu"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ve",
@@ -2460,8 +2272,7 @@
     },
     "acceptableAnswers": [
       "Venezuela"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-vn",
@@ -2473,8 +2284,7 @@
     },
     "acceptableAnswers": [
       "Vietnam"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-ye",
@@ -2486,8 +2296,7 @@
     },
     "acceptableAnswers": [
       "Yémen"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-zm",
@@ -2499,8 +2308,7 @@
     },
     "acceptableAnswers": [
       "Zambie"
-    ],
-    "timeLimit": 15
+    ]
   },
   {
     "id": "flag-zw",
@@ -2512,7 +2320,6 @@
     },
     "acceptableAnswers": [
       "Zimbabwe"
-    ],
-    "timeLimit": 15
+    ]
   }
 ]

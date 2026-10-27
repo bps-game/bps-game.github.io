@@ -20,10 +20,11 @@ Toutes les questions sont **à réponse libre** (tapée au clavier) — il n'y a
 
   "media": null,                 // optionnel : l'élément visuel façon Popsauce (voir ci-dessous), sinon null/absent
 
-  "acceptableAnswers": ["La réponse complète"],
-  "timeLimit": 18                // secondes laissées aux joueurs pour répondre
+  "acceptableAnswers": ["La réponse complète"]
 }
 ```
+
+Pas de champ "temps limite" par question : le temps laissé pour répondre est un réglage commun à toute la partie, choisi par l'hôte dans le lobby (à côté du score pour gagner).
 
 ## L'élément visuel (`media`), façon Popsauce
 

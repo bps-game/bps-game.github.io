@@ -47,12 +47,22 @@
         </div>
         <div class="player-list" id="lobby-players"></div>
 
-        <div class="win-score-block">
-          <label class="hint" for="win-score-input">Score pour gagner la partie</label>
-          <div class="win-score-row">
-            <input type="number" id="win-score-input" min="1" max="2000" step="10" style="display: none" />
-            <span class="win-score-value" id="win-score-value"></span>
-            <span class="hint">pts</span>
+        <div class="lobby-settings-row">
+          <div class="lobby-setting-block">
+            <label class="hint" for="win-score-input">Score pour gagner la partie</label>
+            <div class="lobby-setting-row">
+              <input type="number" id="win-score-input" class="lobby-setting-input" min="1" max="2000" step="10" style="display: none" />
+              <span class="lobby-setting-value" id="win-score-value"></span>
+              <span class="hint">pts</span>
+            </div>
+          </div>
+          <div class="lobby-setting-block">
+            <label class="hint" for="time-limit-input">Temps par question</label>
+            <div class="lobby-setting-row">
+              <input type="number" id="time-limit-input" class="lobby-setting-input" min="3" max="120" step="1" style="display: none" />
+              <span class="lobby-setting-value" id="time-limit-value"></span>
+              <span class="hint">s</span>
+            </div>
           </div>
         </div>
 

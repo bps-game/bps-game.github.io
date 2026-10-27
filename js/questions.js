@@ -71,7 +71,6 @@
     if (!q || typeof q !== "object") return ["question invalide"];
     if (!q.id) errors.push("identifiant manquant");
     if (!q.question) errors.push("texte de la question manquant");
-    if (!q.timeLimit || Number(q.timeLimit) <= 0) errors.push("temps limite invalide");
     if (!Array.isArray(q.acceptableAnswers) || q.acceptableAnswers.length === 0) {
       errors.push("au moins une réponse acceptée est requise");
     }

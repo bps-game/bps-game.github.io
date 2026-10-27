@@ -96,7 +96,7 @@
 
       const meta = document.createElement("div");
       meta.className = "editor-question-meta";
-      const metaParts = [q.category || "Sans catégorie", (q.timeLimit || "?") + "s"];
+      const metaParts = [q.category || "Sans catégorie"];
       const label = mediaLabel(q.media);
       if (label) metaParts.push(label);
       meta.textContent = metaParts.join(" · ");
@@ -304,7 +304,6 @@
     $("modal-title").textContent = q ? "Modifier la question" : "Nouvelle question";
     $("f-category").value = (q && q.category) || "";
     $("f-question").value = (q && q.question) || "";
-    $("f-time-limit").value = (q && q.timeLimit) || 18;
 
     const mediaType = q && q.media ? q.media.type : "";
     $("f-media-type").value = mediaType;
@@ -342,7 +341,6 @@
       category: $("f-category").value.trim(),
       question: $("f-question").value.trim(),
       acceptableAnswers: currentTags.slice(),
-      timeLimit: parseInt($("f-time-limit").value, 10),
     };
     const media = collectMediaStrict();
     if (media) draft.media = media;
