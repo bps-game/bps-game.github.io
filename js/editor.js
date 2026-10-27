@@ -4,10 +4,8 @@
 // de réponse) — pas de réseau, pas de PeerJS.
 (function () {
   const $ = (id) => document.getElementById(id);
-  const DRAFT_KEY = "bps_editor_draft";
 
   let questions = [];
-  let fileHandle = null; // File System Access API, si disponible
   let editingId = null; // null = création d'une nouvelle question
   let currentTags = [];
 
@@ -18,24 +16,6 @@
     el.classList.add("show");
     clearTimeout(el._hideTimeout);
     el._hideTimeout = setTimeout(() => el.classList.remove("show"), 2500);
-  }
-
-  // ---------- Brouillon local (localStorage) ----------
-  function saveDraft() {
-    try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(questions));
-    } catch (e) {
-      // stockage indisponible (navigation privée...) : tant pis, non bloquant
-    }
-  }
-
-  function loadDraft() {
-    try {
-      const raw = localStorage.getItem(DRAFT_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      return null;
-    }
   }
 
   // ---------- Liste des questions ----------
@@ -83,18 +63,14 @@
       return haystack.includes(search);
     });
 
-    $("editor-status").textContent =
-      questions.length +
-      " question" +
-      (questions.length !== 1 ? "s" : "") +
-      (fileHandle ? " — connecté à " + fileHandle.name : " — pense à Ouvrir/Importer ton fichier existant");
+    $("editor-status").textContent = questions.length + " question" + (questions.length !== 1 ? "s" : "");
 
     if (filtered.length === 0) {
       const empty = document.createElement("p");
       empty.className = "hint";
       empty.textContent =
         questions.length === 0
-          ? "Aucune question pour l'instant. Ouvre ton questions.json existant, importe un fichier, ou crée une nouvelle question."
+          ? "Aucune question pour l'instant. Crée-en une, ou clique sur Recharger si le chargement a échoué."
           : "Aucun résultat pour cette recherche.";
       container.appendChild(empty);
       return;
@@ -156,7 +132,6 @@
     if (!q) return;
     if (!confirm("Supprimer la question « " + q.question + " » ?")) return;
     questions = questions.filter((x) => x.id !== id);
-    saveDraft();
     renderList();
     toast("Question supprimée.");
     publishDeletionIfAdmin(id);
@@ -388,7 +363,6 @@
     } else {
       questions.push(draft);
     }
-    saveDraft();
     renderList();
     closeModal();
     toast(editingId ? "Question mise à jour." : "Question ajoutée.");
@@ -396,11 +370,10 @@
   }
 
   // ---------- Publication en direct (admin, voir js/online.js) ----------
-  // Si le compte connecté est admin, chaque sauvegarde/suppression locale
-  // est aussi répercutée immédiatement sur Firestore (collection
-  // /questions), donc déjà vivante dans le jeu sans étape manuelle. Pour
-  // tout le monde d'autre (pas connecté, pas admin, Firebase non configuré),
-  // l'éditeur se comporte exactement comme avant : local, à exporter/committer.
+  // Le compte connecté est forcément admin pour atteindre cette liste (voir
+  // la restriction d'accès dans js/online.js) : chaque sauvegarde/suppression
+  // est donc répercutée immédiatement sur Firestore (collection /questions),
+  // déjà vivante dans le jeu sans étape manuelle.
   function publishIfAdmin(q) {
     if (!window.QuestionsSync || !window.QuestionsSync.isReady()) return;
     window.QuestionsSync.publish(q).catch((err) => {
@@ -415,164 +388,38 @@
     });
   }
 
-  // ---------- Chargement / enregistrement du fichier ----------
-  function replaceQuestions(list, sourceName) {
-    if (!Array.isArray(list)) {
-      toast("Le fichier ne contient pas un tableau de questions valide.");
-      return false;
-    }
-    if (
-      questions.length > 0 &&
-      !confirm(
-        "Charger ce fichier remplacera les " + questions.length + " questions actuellement affichées. Continuer ?"
-      )
-    ) {
-      return false;
-    }
-    questions = list;
-    saveDraft();
-    renderList();
-    toast("Questions chargées depuis " + sourceName + " (" + list.length + ").");
-    return true;
-  }
-
-  // Force une resynchronisation avec ce qui est actuellement en ligne
-  // (socle statique + questions publiées par les admins, voir
-  // js/questions.js) — nécessaire car l'éditeur ne le fait jamais tout seul
-  // une fois qu'il a déjà des questions affichées (pour ne pas écraser un
-  // brouillon en cours) : sans ce bouton, impossible de voir ce qu'un autre
-  // admin a publié sans vider son propre brouillon local à la main.
-  async function reloadFromServer() {
-    const btn = $("btn-reload-server");
-    btn.disabled = true;
-    try {
-      const list = await window.Questions.load();
-      replaceQuestions(list, "le serveur");
-    } catch (err) {
-      toast("Échec du rechargement : " + err.message);
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  async function openFile() {
-    try {
-      const [handle] = await window.showOpenFilePicker({
-        types: [{ description: "JSON", accept: { "application/json": [".json"] } }],
-      });
-      const file = await handle.getFile();
-      const list = JSON.parse(await file.text());
-      if (replaceQuestions(list, file.name)) {
-        fileHandle = handle;
-        $("btn-save-file").disabled = false;
-        renderList();
-      }
-    } catch (err) {
-      if (err.name !== "AbortError") toast("Impossible d'ouvrir le fichier : " + err.message);
-    }
-  }
-
-  function importFile() {
-    $("file-input").click();
-  }
-
-  function handleFileInputChange(e) {
-    const file = e.target.files[0];
-    e.target.value = "";
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        replaceQuestions(JSON.parse(reader.result), file.name);
-      } catch (err) {
-        toast("Fichier JSON invalide : " + err.message);
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  function validateAll() {
-    const errors = [];
-    const seenIds = new Set();
-    questions.forEach((q, i) => {
-      const qErrors = window.Questions.validateOne(q);
-      if (q.id && seenIds.has(q.id)) qErrors.push("identifiant en double (" + q.id + ")");
-      if (q.id) seenIds.add(q.id);
-      if (qErrors.length > 0) {
-        errors.push("#" + (i + 1) + " « " + (q.question || q.id || "?") + " » : " + qErrors.join(", "));
-      }
-    });
-    return errors;
-  }
-
-  async function saveFile() {
-    const errors = validateAll();
-    if (errors.length > 0) {
-      alert("Impossible d'enregistrer, corrige d'abord :\n\n" + errors.join("\n"));
-      return;
-    }
-    if (!fileHandle) return;
-    try {
-      const writable = await fileHandle.createWritable();
-      await writable.write(JSON.stringify(questions, null, 2) + "\n");
-      await writable.close();
-      toast("✅ " + fileHandle.name + " enregistré.");
-    } catch (err) {
-      toast("Échec de l'enregistrement : " + err.message);
-    }
-  }
-
-  function exportFile() {
-    const errors = validateAll();
-    if (errors.length > 0) {
-      alert(
-        "Attention, certaines questions sont invalides (export quand même possible) :\n\n" + errors.join("\n")
-      );
-    }
-    const blob = new Blob([JSON.stringify(questions, null, 2) + "\n"], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "questions.json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    toast("Téléchargement de questions.json lancé.");
-  }
-
   // Ajoute une question déjà approuvée (venue du mode en ligne, voir
-  // js/online.js) à la liste locale, prête à être enregistrée/exportée
-  // comme n'importe quelle autre question. Renomme l'id en cas de collision
-  // plutôt que d'écraser une question existante — renvoie la question telle
-  // qu'ajoutée (id éventuellement renommé) pour que js/online.js publie sur
-  // Firestore exactement sous le même id que celui affiché localement.
+  // js/online.js) à la liste locale, prête à être publiée comme n'importe
+  // quelle autre question. Renomme l'id en cas de collision plutôt que
+  // d'écraser une question existante — renvoie la question telle qu'ajoutée
+  // (id éventuellement renommé) pour que js/online.js publie sur Firestore
+  // exactement sous le même id que celui affiché localement.
   function addApprovedQuestion(q) {
     let toAdd = q;
     if (questions.some((x) => x.id === toAdd.id)) {
       toAdd = Object.assign({}, toAdd, { id: nextId() });
     }
     questions.push(toAdd);
-    saveDraft();
     renderList();
     return toAdd;
   }
 
-  // Charge les questions actuellement en ligne (statique + Firestore, voir
-  // js/questions.js) si l'éditeur démarre à vide (pas de brouillon local) :
-  // évite d'avoir à Ouvrir/Importer manuellement juste pour voir/éditer
-  // l'existant. Un brouillon en cours (dès la première modification) prend
-  // toujours le pas au prochain chargement de page.
-  async function loadLiveQuestionsIfEmpty() {
+  // Charge les questions actuellement en ligne (socle statique + Firestore,
+  // voir js/questions.js) : toujours au démarrage de la page, et à nouveau
+  // sur demande (bouton "🔄 Recharger depuis le serveur") pour voir ce qu'un
+  // autre admin vient de publier sans recharger toute la page.
+  async function loadFromServer(options) {
+    options = options || {};
+    const btn = $("btn-reload-server");
+    if (btn) btn.disabled = true;
     try {
-      const list = await window.Questions.load();
-      if (questions.length === 0) {
-        questions = list;
-        renderList();
-        toast("Questions actuelles chargées (" + list.length + ").");
-      }
+      questions = await window.Questions.load();
+      renderList();
+      if (!options.silent) toast("Questions à jour (" + questions.length + ").");
     } catch (err) {
-      // Pas grave : Ouvrir/Importer restent disponibles.
+      toast("Échec du chargement des questions : " + err.message);
+    } finally {
+      if (btn) btn.disabled = false;
     }
   }
 
@@ -583,19 +430,8 @@
 
   // ---------- Initialisation ----------
   function init() {
-    const hasFsAccess = "showOpenFilePicker" in window;
-    $("btn-open-file").style.display = hasFsAccess ? "inline-block" : "none";
-    $("btn-save-file").style.display = hasFsAccess ? "inline-block" : "none";
-
-    const draft = loadDraft();
-    if (draft && draft.length > 0) {
-      questions = draft;
-      toast("Brouillon local restauré (" + draft.length + " question(s)).");
-      renderList();
-    } else {
-      renderList();
-      loadLiveQuestionsIfEmpty();
-    }
+    renderList();
+    loadFromServer({ silent: true });
 
     $("search-input").addEventListener("input", renderList);
     $("btn-new-question").addEventListener("click", () => openModal(null));
@@ -615,12 +451,7 @@
     });
     $("f-answer-test").addEventListener("input", updateAnswerTest);
 
-    $("btn-open-file").addEventListener("click", openFile);
-    $("btn-import-file").addEventListener("click", importFile);
-    $("btn-reload-server").addEventListener("click", reloadFromServer);
-    $("file-input").addEventListener("change", handleFileInputChange);
-    $("btn-save-file").addEventListener("click", saveFile);
-    $("btn-export-file").addEventListener("click", exportFile);
+    $("btn-reload-server").addEventListener("click", () => loadFromServer({ silent: false }));
 
     $("modal-overlay").addEventListener("click", (e) => {
       if (e.target.id === "modal-overlay") closeModal();

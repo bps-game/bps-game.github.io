@@ -25,20 +25,11 @@
       <div class="editor-toolbar card">
         <input type="text" id="search-input" placeholder="Rechercher une question, une catégorie, une réponse…" />
         <div class="editor-toolbar-actions">
-          <button class="btn-secondary" id="btn-open-file" style="display: none" title="Chrome/Edge uniquement">
-            📂 Ouvrir questions.json
-          </button>
-          <button class="btn-secondary" id="btn-import-file">📤 Importer un fichier</button>
-          <button class="btn-secondary" id="btn-reload-server" title="Recharge les questions actuelles (socle + publié par les admins), même si tu as déjà des questions affichées">
+          <button class="btn-secondary" id="btn-reload-server" title="Recharge les questions actuelles (socle + publié par les admins), utile après qu'un autre admin ait publié quelque chose">
             🔄 Recharger depuis le serveur
           </button>
-          <button class="btn-secondary" id="btn-save-file" style="display: none" disabled title="Chrome/Edge uniquement">
-            💾 Enregistrer
-          </button>
-          <button class="btn-secondary" id="btn-export-file">⬇️ Exporter</button>
           <button class="btn-primary" id="btn-new-question">+ Nouvelle question</button>
         </div>
-        <input type="file" id="file-input" accept="application/json" style="display: none" />
       </div>
 
       <p class="editor-status hint" id="editor-status"></p>
