@@ -436,6 +436,25 @@
     return true;
   }
 
+  // Force une resynchronisation avec ce qui est actuellement en ligne
+  // (socle statique + questions publiées par les admins, voir
+  // js/questions.js) — nécessaire car l'éditeur ne le fait jamais tout seul
+  // une fois qu'il a déjà des questions affichées (pour ne pas écraser un
+  // brouillon en cours) : sans ce bouton, impossible de voir ce qu'un autre
+  // admin a publié sans vider son propre brouillon local à la main.
+  async function reloadFromServer() {
+    const btn = $("btn-reload-server");
+    btn.disabled = true;
+    try {
+      const list = await window.Questions.load();
+      replaceQuestions(list, "le serveur");
+    } catch (err) {
+      toast("Échec du rechargement : " + err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   async function openFile() {
     try {
       const [handle] = await window.showOpenFilePicker({
@@ -598,6 +617,7 @@
 
     $("btn-open-file").addEventListener("click", openFile);
     $("btn-import-file").addEventListener("click", importFile);
+    $("btn-reload-server").addEventListener("click", reloadFromServer);
     $("file-input").addEventListener("change", handleFileInputChange);
     $("btn-save-file").addEventListener("click", saveFile);
     $("btn-export-file").addEventListener("click", exportFile);
