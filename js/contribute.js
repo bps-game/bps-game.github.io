@@ -5,7 +5,6 @@
 import {
   collection,
   addDoc,
-  updateDoc,
   deleteDoc,
   doc,
   setDoc,
@@ -37,14 +36,6 @@ export function watchProposals(callback) {
     const list = [];
     snap.forEach((docSnap) => list.push(Object.assign({ id: docSnap.id }, docSnap.data())));
     callback(list);
-  });
-}
-
-export function reviewProposal(proposalId, status, reviewerUid) {
-  return updateDoc(doc(db, COLLECTION, proposalId), {
-    status,
-    reviewedBy: reviewerUid,
-    reviewedAt: serverTimestamp(),
   });
 }
 

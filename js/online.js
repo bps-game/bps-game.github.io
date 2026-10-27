@@ -7,7 +7,6 @@ import { signIn, signOutUser, watchAuth, checkIsAdmin, isSuperAdminEmail } from 
 import {
   proposeQuestion,
   watchProposals,
-  reviewProposal,
   deleteProposal,
   publishQuestion,
   unpublishQuestion,
@@ -59,7 +58,13 @@ function renderProposals() {
 
   if (!currentUser || !currentPseudo) return;
 
-  if (latestProposals.length === 0) {
+  // Une fois traitée (approuvée ou rejetée), une proposition est supprimée
+  // de Firestore — pas la peine de garder un historique (voir
+  // approveProposal/rejectProposal). Ce filtre reste un filet de sécurité
+  // pour d'anciennes propositions qui traîneraient encore.
+  const pending = latestProposals.filter((p) => p.status === "pending");
+
+  if (pending.length === 0) {
     const empty = document.createElement("p");
     empty.className = "hint";
     empty.textContent = "Aucune proposition pour l'instant.";
@@ -67,7 +72,7 @@ function renderProposals() {
     return;
   }
 
-  latestProposals.forEach((p) => {
+  pending.forEach((p) => {
     const card = document.createElement("div");
     card.className = "proposal-card status-" + p.status;
 
@@ -178,11 +183,15 @@ async function addAdminFromInput() {
   }
 }
 
+// Pas d'historique à garder (ni "approuvée" ni "rejetée") : une fois la
+// décision prise, la proposition est retirée de Firestore plutôt que
+// simplement marquée — sinon la file s'alourdit indéfiniment de
+// propositions déjà traitées.
 async function approveProposal(proposal) {
   try {
-    await reviewProposal(proposal.id, "approved", currentUser.uid);
     const added = window.EditorBridge.addApprovedQuestion(proposal.question);
     await publishQuestion(added);
+    await deleteProposal(proposal.id);
     toast("Proposition approuvée — déjà en ligne dans le jeu !");
   } catch (err) {
     toast("Erreur lors de l'approbation : " + err.message);
@@ -191,7 +200,7 @@ async function approveProposal(proposal) {
 
 async function rejectProposal(proposal) {
   try {
-    await reviewProposal(proposal.id, "rejected", currentUser.uid);
+    await deleteProposal(proposal.id);
     toast("Proposition rejetée.");
   } catch (err) {
     toast("Erreur : " + err.message);
